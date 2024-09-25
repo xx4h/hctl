@@ -1,0 +1,33 @@
+---
+name: Lint Code Base
+
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+
+permissions: { }
+
+jobs:
+  build:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      # To report github actions status checks
+      statuses: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed
+          # files within `super-linter`
+          fetch-depth: 0
+      - name: Lint Code Base
+        uses: super-linter/super-linter@v6
+        env:
+          # validate full codebase
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_JSCPD: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

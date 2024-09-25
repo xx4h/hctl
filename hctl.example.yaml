@@ -1,0 +1,5 @@
+# Configure Hub
+hub:
+  type: hass
+  url: https://home-assistant.example.com/api
+  token: YourToken

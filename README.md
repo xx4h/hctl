@@ -1,3 +1,5 @@
+# hctl
+
 <!-- markdownlint-disable no-empty-links -->
 
 [![Lint Code Base](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml)
@@ -12,8 +14,6 @@
 <br>
 
 <!-- markdownlint-enable no-empty-links -->
-
-# hctl
 
 hctl is a tool to control your Home Assistant (and maybe more in the future) devices from the command line
 

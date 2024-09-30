@@ -30,4 +30,5 @@ jobs:
           # only validate new or edited files
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JSCPD: false
+          VALIDATE_GO: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

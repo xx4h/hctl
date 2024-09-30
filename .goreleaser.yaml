@@ -22,9 +22,9 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X main.version=v{{.Version}}
-      - -X main.commit={{.Commit}}
-      - -X main.date={{.Date}}
+      - -X github.com/xx4h/hctl/cmd.version=v{{.Version}}
+      - -X github.com/xx4h/hctl/cmd.commit={{.Commit}}
+      - -X github.com/xx4h/hctl/cmd.date={{.Date}}
 
 archives:
   - format: tar.gz

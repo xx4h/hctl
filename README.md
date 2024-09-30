@@ -1,3 +1,18 @@
+<!-- markdownlint-disable no-empty-links -->
+
+[![Lint Code Base](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml)
+[![SLOC](https://tokei.rs/b1/github/xx4h/hctl?category=code&style=flat)](#)
+[![Number of programming languages used](https://img.shields.io/github/languages/count/xx4h/hctl)](#)
+[![Top programming languages used](https://img.shields.io/github/languages/top/xx4h/hctl)](#)
+[![Open issues](https://img.shields.io/github/issues/xx4h/hctl)](https://github.com/xx4h/hctl/issues)
+[![Closed issues](https://img.shields.io/github/issues-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/issues?q=is%3Aissue+is%3Aclosed)
+[![Closed PRs](https://img.shields.io/github/issues-pr-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/pulls?q=is%3Apr+is%3Aclosed)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE.txt)
+[![Latest tag](https://img.shields.io/github/v/tag/xx4h/hctl)](https://github.com/xx4h/hctl/tags)
+<br>
+
+<!-- markdownlint-enable no-empty-links -->
+
 # hctl
 
 hctl is a tool to control your Home Assistant (and maybe more in the future) devices from the command line

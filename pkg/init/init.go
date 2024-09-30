@@ -91,7 +91,7 @@ func getURL() string {
 func getToken() string {
 	var token string
 	fmt.Print("Enter your hub token: ")
-	byteToken, err := term.ReadPassword(syscall.Stdin)
+	byteToken, err := term.ReadPassword(int(syscall.Stdin)) //nolint:unconvert
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return getToken()

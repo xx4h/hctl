@@ -28,8 +28,8 @@ import (
 
 type Hctl struct {
 	cfg *config.Config
-	//out io.ReadWriteCloser
-	//log *zerolog.Logger
+	// out io.ReadWriteCloser
+	// log *zerolog.Logger
 }
 
 func NewHctl() (*Hctl, error) {
@@ -56,7 +56,7 @@ func (h *Hctl) CompletionShortNamesEnabled() bool {
 }
 
 func (h *Hctl) GetRest() *rest.Hass {
-	return rest.New(h.cfg.Hub.Url, h.cfg.Hub.Token, h.cfg.Handling.Fuzz)
+	return rest.New(h.cfg.Hub.URL, h.cfg.Hub.Token, h.cfg.Handling.Fuzz)
 }
 
 func (h *Hctl) GetServices() []rest.HassService {

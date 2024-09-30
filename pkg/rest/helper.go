@@ -26,7 +26,7 @@ func RemoveDomainsFromStates(s []HassState, domains []string) []HassState {
 
 	k := 0
 	for _, d := range s {
-		e := strings.Split(d.EntityId, ".")
+		e := strings.Split(d.EntityID, ".")
 		if slices.Contains(domains, e[0]) {
 			s[k] = d
 			k++

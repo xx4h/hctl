@@ -34,7 +34,7 @@ var (
 )
 
 // rootCmd represents the base command when called without any subcommands
-func newRootCmd(h *pkg.Hctl, out io.Writer, args []string) *cobra.Command {
+func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 	var logLevel string
 
 	banner, err := o.GetBanner()
@@ -47,7 +47,7 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, args []string) *cobra.Command {
 		Use:   appName,
 		Short: "A command line tool to control your home automation",
 		Long:  fmt.Sprintf("%s\nHctl is a CLI tool to control your home automation", banner),
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
 			lvl, err := zerolog.ParseLevel(logLevel)
 			if err != nil {
 				return err
@@ -58,12 +58,12 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, args []string) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newVersionCmd(h, out),
-		newInitCmd(h, out),
-		newListCmd(h, out),
+		newVersionCmd(out),
+		newInitCmd(h),
+		newListCmd(h),
 		newToggleCmd(h, out),
-		newCompletionCmd(h, out),
-		newOnCmd(h, out),
+		newCompletionCmd(),
+		newOnCmd(h),
 		newOffCmd(h, out),
 	)
 
@@ -80,5 +80,7 @@ func runCmd() {
 		log.Fatal().Msgf("Error: %v", err)
 	}
 	rootCmd = newRootCmd(h, os.Stdout, os.Args[1:])
-	_ = rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		log.Error().Msgf("Error: %v", err)
+	}
 }

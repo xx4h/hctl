@@ -45,7 +45,11 @@ func Test_printVersion(t *testing.T) {
 			b := new(bytes.Buffer)
 			printVersion(b, tt.short)
 			o := b.String()
-			if ok, _ := regexp.MatchString(tt.rexOut, o); !ok {
+			ok, err := regexp.MatchString(tt.rexOut, o)
+			if err != nil {
+				t.Errorf("error: %v", err)
+			}
+			if !ok {
 				t.Errorf("got %q, want %q", o, tt.rexOut)
 			}
 		})

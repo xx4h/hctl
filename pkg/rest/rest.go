@@ -28,7 +28,7 @@ import (
 )
 
 type Hass struct {
-	ApiUrl   string
+	APIURL   string
 	Token    string
 	Fuzz     bool
 	States   []HassState
@@ -37,7 +37,7 @@ type Hass struct {
 }
 
 type HassResult struct {
-	EntityId    string `json:"entity_id"`
+	EntityID    string `json:"entity_id"`
 	State       string `json:"state"`
 	TargetState string
 	Attributes  HassResponseAttributes `json:"attributes"`
@@ -47,16 +47,16 @@ type HassResponseAttributes struct {
 	FriendlyName string `json:"friendly_name"`
 }
 
-func New(apiUrl string, token string, fuzz bool) *Hass {
-	return &Hass{ApiUrl: apiUrl, Token: token, Fuzz: fuzz}
+func New(apiURL string, token string, fuzz bool) *Hass {
+	return &Hass{APIURL: apiURL, Token: token, Fuzz: fuzz}
 }
 
 func (h *Hass) preflight() error {
-	if h.ApiUrl == "" {
-		return errors.New("No Hub Url found: Run `hctl init` or manually create config.")
+	if h.APIURL == "" {
+		return errors.New("no Hub URL found: Run `hctl init` or manually create config")
 	}
 	if h.Token == "" {
-		return errors.New("No Hub Token found: Run `hctl init` or manually create config.")
+		return errors.New("no Hub Token found: Run `hctl init` or manually create config")
 	}
 	return nil
 }
@@ -73,12 +73,12 @@ func (h *Hass) api(meth string, path string, payload map[string]string) ([]byte,
 		if err != nil {
 			return []byte{}, nil
 		}
-		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.ApiUrl, path), bytes.NewBuffer(jayload))
+		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), bytes.NewBuffer(jayload))
 		if err != nil {
 			return []byte{}, nil
 		}
 	} else {
-		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.ApiUrl, path), nil)
+		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), nil)
 		if err != nil {
 			return []byte{}, nil
 		}
@@ -172,13 +172,11 @@ func (h *Hass) findEntity(obj string, svc string) (string, string, error) {
 	distance := 999
 
 	for d := range states {
-		s := strings.Split(states[d].EntityId, ".")
+		s := strings.Split(states[d].EntityID, ".")
 		if h.Fuzz {
 			names = append(names, s[1])
-		} else {
-			if s[1] == obj {
-				return s[0], s[1], nil
-			}
+		} else if s[1] == obj {
+			return s[0], s[1], nil
 		}
 	}
 	if h.Fuzz {
@@ -193,7 +191,7 @@ func (h *Hass) findEntity(obj string, svc string) (string, string, error) {
 			}
 		}
 		if found {
-			s := strings.Split(states[position].EntityId, ".")
+			s := strings.Split(states[position].EntityID, ".")
 			return s[0], s[1], nil
 		}
 	}
@@ -205,9 +203,8 @@ func (h *Hass) entityArgHandler(args []string, service string) (string, string, 
 		return h.findEntity(args[0], service)
 	} else if len(args) == 2 {
 		return args[0], args[1], nil
-	} else {
-		return "", "", fmt.Errorf("splitHandler has to many entries in args: %d", len(args))
 	}
+	return "", "", fmt.Errorf("splitHandler has to many entries in args: %d", len(args))
 }
 
 func (h *Hass) TurnOff(args ...string) (string, string, string, error) {

@@ -23,7 +23,7 @@ import (
 )
 
 type HassState struct {
-	EntityId   string         `json:"entity_id"`
+	EntityID   string         `json:"entity_id"`
 	State      string         `json:"state"`
 	Attributes map[string]any `json:"attributes"`
 }
@@ -61,7 +61,7 @@ func (h *Hass) GetFilteredStatesMap(domains []string) map[string][]string {
 	states := h.GetFilteredStates(domains)
 	t := make(map[string][]string)
 	for state := range states {
-		elist := strings.Split(states[state].EntityId, ".")
+		elist := strings.Split(states[state].EntityID, ".")
 		t[elist[0]] = append(t[elist[0]], elist[1])
 	}
 	return t
@@ -86,7 +86,7 @@ func (h *Hass) GetStatesWithService(service string) ([]HassState, error) {
 	}
 
 	for d := range states {
-		s := strings.Split(states[d].EntityId, ".")
+		s := strings.Split(states[d].EntityID, ".")
 		if slices.Contains(domainsWithService, s[0]) {
 			statesWithService = append(statesWithService, states[d])
 		}
@@ -99,7 +99,7 @@ func (h *Hass) hasEntityInDomain(state string, domain string) bool {
 	states := h.GetStates()
 
 	for d := range states {
-		s := strings.Split(states[d].EntityId, ".")
+		s := strings.Split(states[d].EntityID, ".")
 		if domain == s[0] && state == s[1] {
 			return true
 		}

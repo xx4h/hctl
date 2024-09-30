@@ -25,7 +25,7 @@ import (
 )
 
 // toggleCmd represents the toggle command
-func newToggleCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+func newToggleCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "toggle",
 		Short:   "Toggle on/off a light or switch",
@@ -37,7 +37,7 @@ func newToggleCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 			}
 			return compListStates(toComplete, args, "toggle", "", h)
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
 			obj, state, sub, err := c.Toggle(args[0])
 			if err != nil {

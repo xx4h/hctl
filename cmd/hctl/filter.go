@@ -29,7 +29,7 @@ func filterStates(states []rest.HassState, ignoredStates []string) []rest.HassSt
 	for _, rel := range states {
 		found := false
 		for _, ignoredName := range ignoredStates {
-			if rel.EntityId == ignoredName {
+			if rel.EntityID == ignoredName {
 				found = true
 				break
 			}
@@ -59,7 +59,7 @@ func filterCapable(states []rest.HassState, services []rest.HassService, service
 	}
 
 	for rel := range states {
-		s := strings.Split(states[rel].EntityId, ".")
+		s := strings.Split(states[rel].EntityID, ".")
 		stateDomain := s[0]
 		for svc := range capableServices {
 			if stateDomain == capableServices[svc].Domain {

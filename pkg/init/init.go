@@ -31,12 +31,13 @@ import (
 )
 
 func InitializeConfig(c *config.Config, configPath string) error {
-	if _, err := os.Stat(configPath); err == nil {
-		return fmt.Errorf("Config already initialized, please use `hctl config` or edit %s directly.\n", configPath)
+	_, err := os.Stat(configPath)
+	if err == nil {
+		return fmt.Errorf("config already initialized, please use `hctl config` or edit %s directly", configPath)
 	} else if errors.Is(err, fs.ErrNotExist) {
-		hub := new(config.ConfigHub)
+		hub := new(config.Hub)
 		hub.Type = getHubType()
-		hub.Url = getUrl()
+		hub.URL = getURL()
 		hub.Token = getToken()
 
 		c.Viper.Set("hub", &hub)
@@ -50,10 +51,8 @@ func InitializeConfig(c *config.Config, configPath string) error {
 			log.Error().Msgf("Couldn't write config: %v\n", err)
 		}
 		return nil
-	} else {
-		return fmt.Errorf("Unknown Error, this should not happen: %v", err)
 	}
-	//  if configDirStat, err := os.Stat(configDir); errors(err, os.ErrNotExists)
+	return fmt.Errorf("Unknown Error, this should not happen: %v", err)
 }
 
 func getHubType() string {
@@ -73,18 +72,18 @@ func getHubType() string {
 	return hubType
 }
 
-func getUrl() string {
+func getURL() string {
 	var url string
 	fmt.Print("Enter API URL of your hub (e.g. https://home-assistant.example.com/api): ")
 	_, err := fmt.Scanln(&url)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
-		return getUrl()
+		return getURL()
 	}
 	up, err := u.Parse(url)
 	if err != nil || up.Scheme == "" || up.Host == "" {
 		fmt.Printf("Not a valid URL: %s\n", url)
-		return getUrl()
+		return getURL()
 	}
 	return url
 }
@@ -92,7 +91,7 @@ func getUrl() string {
 func getToken() string {
 	var token string
 	fmt.Print("Enter your hub token: ")
-	byteToken, err := term.ReadPassword(int(syscall.Stdin))
+	byteToken, err := term.ReadPassword(syscall.Stdin)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return getToken()

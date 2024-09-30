@@ -15,7 +15,6 @@
 package main
 
 import (
-	"io"
 	"os"
 	"path"
 
@@ -27,12 +26,12 @@ import (
 )
 
 // initCmd represents the init command
-func newInitCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+func newInitCmd(h *pkg.Hctl) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize and config hctl",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			// TODO: find better way to get this path (needs to work together with cmd/root.go)
 			userDir, err := os.UserHomeDir()
 			if err != nil {

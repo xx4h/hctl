@@ -21,29 +21,29 @@ import (
 )
 
 type Config struct {
-	Hub        ConfigHub        `yaml:"hub"`
-	Completion ConfigCompletion `yaml:"completion"`
-	Handling   ConfigHandling   `yaml:"handling"`
-	Logging    ConfigLogging    `yamn:"logging"`
+	Hub        Hub        `yaml:"hub"`
+	Completion Completion `yaml:"completion"`
+	Handling   Handling   `yaml:"handling"`
+	Logging    Logging    `yamn:"logging"`
 	Viper      *viper.Viper
 }
 
-type ConfigHub struct {
+type Hub struct {
 	Type  string `yaml:"type"`
-	Url   string `yaml:"url"`
+	URL   string `yaml:"url"`
 	Token string `yaml:"token"`
 }
 
-type ConfigCompletion struct {
+type Completion struct {
 	ShortNames bool `yaml:"shortNames"`
 	WhatIf     bool `yaml:"whatif"`
 }
 
-type ConfigHandling struct {
+type Handling struct {
 	Fuzz bool `yaml:"fuzz"`
 }
 
-type ConfigLogging struct {
+type Logging struct {
 	LogLevel string `yaml:"log_level"`
 }
 
@@ -79,9 +79,9 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	log_level := v.GetString("log_level")
-	if log_level != "" {
-		lvl, err := zerolog.ParseLevel(log_level)
+	logLevel := v.GetString("log_level")
+	if logLevel != "" {
+		lvl, err := zerolog.ParseLevel(logLevel)
 		if err != nil {
 			return nil, err
 		}

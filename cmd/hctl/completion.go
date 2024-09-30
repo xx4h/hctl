@@ -16,7 +16,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"slices"
 	"strings"
@@ -27,7 +26,7 @@ import (
 	"github.com/xx4h/hctl/pkg"
 )
 
-func newCompletionCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+func newCompletionCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "completion [bash|zsh|fish|powershell]",
@@ -117,7 +116,7 @@ func noMoreArgsComp() ([]string, cobra.ShellCompDirective) {
 }
 
 // support function for completion
-func compListStates(toComplete string, ignoredStates []string, service string, state string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
+func compListStates(_ string, ignoredStates []string, service string, state string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
 	states := h.GetStates()
 	services := h.GetServices()
 
@@ -127,15 +126,15 @@ func compListStates(toComplete string, ignoredStates []string, service string, s
 	var choices []string
 	for _, rel := range filteredStates {
 		if h.CompletionShortNamesEnabled() {
-			s := strings.Split(rel.EntityId, ".")
+			s := strings.Split(rel.EntityID, ".")
 			if slices.Contains(choices, s[1]) {
 				// if we've more than one, we add the second-n with long name
-				choices = append(choices, rel.EntityId)
+				choices = append(choices, rel.EntityID)
 			} else {
 				choices = append(choices, s[1])
 			}
 		} else {
-			choices = append(choices, rel.EntityId)
+			choices = append(choices, rel.EntityID)
 		}
 	}
 

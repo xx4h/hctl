@@ -15,8 +15,6 @@
 package main
 
 import (
-	"io"
-
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -24,7 +22,7 @@ import (
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+func newOnCmd(h *pkg.Hctl) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "on",
@@ -36,7 +34,7 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 			}
 			return compListStates(toComplete, args, "turn_on", "off", h)
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
 			obj, state, sub, err := c.TurnOn(args[0])
 			if err != nil {

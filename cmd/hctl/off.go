@@ -24,7 +24,7 @@ import (
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "off",
@@ -36,7 +36,7 @@ func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 			}
 			return compListStates(toComplete, args, "turn_off", "on", h)
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
 			obj, state, sub, err := c.TurnOff(args[0])
 			if err != nil {

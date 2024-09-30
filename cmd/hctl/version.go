@@ -18,19 +18,20 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/xx4h/hctl/pkg"
+	o "github.com/xx4h/hctl/pkg/output"
 )
 
 // versionCmd represents the version command
-func newVersionCmd(hctl *pkg.Hctl, out io.Writer) *cobra.Command {
+func newVersionCmd(out io.Writer) *cobra.Command {
 	var short bool
 
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print version info",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			printVersion(out, short)
 		},
 	}
@@ -41,6 +42,14 @@ func newVersionCmd(hctl *pkg.Hctl, out io.Writer) *cobra.Command {
 }
 
 func printVersion(out io.Writer, short bool) {
+	if !short {
+		banner, err := o.GetBanner()
+		if err != nil {
+			log.Error().Msgf("Could not get banner: %v", err)
+		}
+		fmt.Fprint(out, banner)
+
+	}
 	const format = "%-10s %s\n"
 	fmt.Fprintf(out, format, "Version:", version)
 	fmt.Fprintf(out, format, "Commit:", commit)

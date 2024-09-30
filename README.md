@@ -29,7 +29,7 @@ hctl init
 
 or copy the example config from this project
 
-```bash
+```yaml
 # Configure Hub
 hub:
   type: hass
@@ -87,7 +87,7 @@ light.livingroom_main     light.livingroom_corner      light.livingroom_other
 
 Completion Short Names can be disabled with:
 
-```bash
+```yaml
 completion:
     short_names: false
 ```
@@ -108,7 +108,7 @@ hctl on lw
 Fuzzy Matching is enabled by default.
 Fuzzy Matching can be turned off in the config with:
 
-```bash
+```yaml
 handling:
     fuzz: false
 ```

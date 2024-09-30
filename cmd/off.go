@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
 	"io"
@@ -24,22 +24,21 @@ import (
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-// toggleCmd represents the toggle command
-func newToggleCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+
 	cmd := &cobra.Command{
-		Use:     "toggle",
-		Short:   "Toggle on/off a light or switch",
-		Aliases: []string{"t"},
-		Args:    cobra.MatchAll(cobra.ExactArgs(1)),
+		Use:   "off",
+		Short: "Switch or turn off a light or switch",
+		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) != 0 {
 				return noMoreArgsComp()
 			}
-			return compListStates(toComplete, args, "toggle", "", h)
+			return compListStates(toComplete, args, "turn_off", "on", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.Toggle(args[0])
+			obj, state, sub, err := c.TurnOff(args[0])
 			if err != nil {
 				o.PrintError(err)
 			} else {

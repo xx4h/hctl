@@ -25,7 +25,6 @@ builds:
       - -X main.version=v{{.Version}}
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
-    main: ./cmd/hctl
 
 archives:
   - format: tar.gz

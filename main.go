@@ -14,6 +14,10 @@
 
 package main
 
+import (
+	"github.com/xx4h/hctl/cmd"
+)
+
 func main() {
-	runCmd()
+	cmd.RunCmd()
 }

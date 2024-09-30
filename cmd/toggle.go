@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
+	"io"
+
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -22,21 +24,22 @@ import (
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-func newOnCmd(h *pkg.Hctl) *cobra.Command {
-
+// toggleCmd represents the toggle command
+func newToggleCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "on",
-		Short: "Switch or turn on a light or switch",
-		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+		Use:     "toggle",
+		Short:   "Toggle on/off a light or switch",
+		Aliases: []string{"t"},
+		Args:    cobra.MatchAll(cobra.ExactArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) != 0 {
 				return noMoreArgsComp()
 			}
-			return compListStates(toComplete, args, "turn_on", "off", h)
+			return compListStates(toComplete, args, "toggle", "", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.TurnOn(args[0])
+			obj, state, sub, err := c.Toggle(args[0])
 			if err != nil {
 				o.PrintError(err)
 			} else {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
 	"fmt"
@@ -72,7 +72,7 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 	return cmd
 }
 
-func runCmd() {
+func RunCmd() {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	h, err := pkg.NewHctl()

@@ -12,41 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/xx4h/hctl/pkg"
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+// versionCmd represents the version command
+func newVersionCmd(out io.Writer) *cobra.Command {
+	var short bool
 
 	cmd := &cobra.Command{
-		Use:   "off",
-		Short: "Switch or turn off a light or switch",
-		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
-		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			if len(args) != 0 {
-				return noMoreArgsComp()
-			}
-			return compListStates(toComplete, args, "turn_off", "on", h)
-		},
-		Run: func(_ *cobra.Command, args []string) {
-			c := h.GetRest()
-			obj, state, sub, err := c.TurnOff(args[0])
-			if err != nil {
-				o.PrintError(err)
-			} else {
-				o.PrintSuccessAction(obj, state)
-			}
-			log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+		Use:   "version",
+		Short: "Print version info",
+		Run: func(_ *cobra.Command, _ []string) {
+			printVersion(out, short)
 		},
 	}
 
+	cmd.PersistentFlags().BoolVarP(&short, "short", "s", false, "Prints version info in short format")
+
 	return cmd
+}
+
+func printVersion(out io.Writer, short bool) {
+	if !short {
+		banner, err := o.GetBanner()
+		if err != nil {
+			log.Error().Msgf("Could not get banner: %v", err)
+		}
+		fmt.Fprint(out, banner)
+
+	}
+	const format = "%-10s %s\n"
+	fmt.Fprintf(out, format, "Version:", version)
+	fmt.Fprintf(out, format, "Commit:", commit)
+	fmt.Fprintf(out, format, "Date:", date)
 }

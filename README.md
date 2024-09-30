@@ -13,17 +13,17 @@ hctl is a tool to control your Home Assistant (and maybe more in the future) dev
 ## Install
 
 ### Go
-```
+```bash
 go install github.com/xx4h/hctl@latest
 ```
 
 ## Configuration
 Run the init command
-```
+```bash
 hctl init
 ```
 or copy the example config from this project
-```
+```bash
 # Configure Hub
 hub:
   type: hass
@@ -31,20 +31,20 @@ hub:
   token: YourToken
 ```
 ensure the folder does already exist and edit with your favorite editor
-```
+```bash
 mkdir -p ~/.config/hctl
 $EDITOR ~/.config/hctl/hctl.yaml
 ```
 
 To really benefit from all features, ensure you've loaded the bash completion
-```
+```bash
 # Bash (e.g. your ~/.bashrc)
 type hctl >/dev/null 2>&1 && source <(hctl completion bash)
 ```
 
 ## Usage
 
-```
+```bash
 # Turn on all lights on Floor 1
 hctl on floor1
 
@@ -55,7 +55,7 @@ hctl toggle some_switch
 
 ### Completion Short Names
 Home Assistant names its entities `domain.name`, like `light.some_light`.
-```
+```bash
 # Imagine having the following devices/entities
 light.livingroom_main
 light.livingroom_corner
@@ -74,7 +74,7 @@ hclt off light.<TAB><TAB>
 light.livingroom_main     light.livingroom_corner      light.livingroom_other
 ```
 Completion Short Names can be disabled with:
-```
+```bash
 completion:
     short_names: false
 ```
@@ -82,7 +82,7 @@ completion:
 
 ### Fuzzy Matching
 
-```
+```bash
 # Imagine having the following devices
 light.livingroom_main
 light.livingroom_corner
@@ -94,7 +94,7 @@ hctl on lw
 ```
 Fuzzy Matching is enabled by default.
 Fuzzy Matching can be turned off in the config with:
-```
+```bash
 handling:
     fuzz: false
 ```

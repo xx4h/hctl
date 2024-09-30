@@ -89,7 +89,7 @@ Completion Short Names can be disabled with:
 
 ```yaml
 completion:
-    short_names: false
+  short_names: false
 ```
 
 ### Fuzzy Matching
@@ -110,7 +110,7 @@ Fuzzy Matching can be turned off in the config with:
 
 ```yaml
 handling:
-    fuzz: false
+  fuzz: false
 ```
 
 ## Roadmap

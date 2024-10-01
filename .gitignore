@@ -27,11 +27,9 @@ go.work.sum
 ## hctl specifics
 # exlude bin/ for builds
 bin/
-# exclude _dist/ for dist builds
-_dist/
+# exclude dist/ for dist builds
+dist/
 # exclude local hctl.yaml file
 /hctl.yaml
 # explicitly include hctl.example.yaml
 !/hctl.example.yaml
-
-dist/

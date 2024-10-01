@@ -3,13 +3,15 @@
 <!-- markdownlint-disable no-empty-links -->
 
 [![Lint Code Base](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xx4h/hctl?)](https://goreportcard.com/report/github.com/xx4h/hctl)
+[![codebeat badge](https://codebeat.co/badges/21ee1b92-b94c-4425-a600-b01dd4b1c045)](https://codebeat.co/projects/github-com-xx4h-hctl-main)
 [![SLOC](https://tokei.rs/b1/github/xx4h/hctl?category=code&style=flat)](#)
 [![Number of programming languages used](https://img.shields.io/github/languages/count/xx4h/hctl)](#)
 [![Top programming languages used](https://img.shields.io/github/languages/top/xx4h/hctl)](#)
 [![Open issues](https://img.shields.io/github/issues/xx4h/hctl)](https://github.com/xx4h/hctl/issues)
 [![Closed issues](https://img.shields.io/github/issues-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/issues?q=is%3Aissue+is%3Aclosed)
 [![Closed PRs](https://img.shields.io/github/issues-pr-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/pulls?q=is%3Apr+is%3Aclosed)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE.txt)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Latest tag](https://img.shields.io/github/v/tag/xx4h/hctl)](https://github.com/xx4h/hctl/tags)
 <br>
 
@@ -34,7 +36,20 @@ hctl is a tool to control your Home Assistant (and maybe more in the future) dev
 go install github.com/xx4h/hctl@latest
 ```
 
+### Release binary
+
+Download the latest release binary from the [Release Page](https://github.com/xx4h/hctl/releases/latest) and extract it
+
+### Build & Install from Source
+
+```bash
+git clone https://github.com/xx4h/hctl.git && cd hctl
+make build && make local-install # intalls to ~/.local/bin/hctl
+```
+
 ## Configuration
+
+### Wizard
 
 Run the init command
 
@@ -42,7 +57,9 @@ Run the init command
 hctl init
 ```
 
-or copy the example config from this project
+### Manually
+
+Copy the example config from this project
 
 ```yaml
 # Configure Hub

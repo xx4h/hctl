@@ -100,52 +100,6 @@ func (h *Hass) api(meth string, path string, payload map[string]string) ([]byte,
 	return rData, nil
 }
 
-func (h *Hass) turn(state string, sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, fmt.Sprintf("turn_%s", state))
-	if err != nil {
-		return err
-	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, fmt.Sprintf("turn_%s", state))
-	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
-	payload := map[string]string{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
-	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", sub, state), payload)
-	if err != nil {
-		return err
-	}
-
-	if err := h.getResult(res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (h *Hass) toggle(sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, "toggle")
-	if err != nil {
-		return err
-	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, "toggle")
-	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
-	payload := map[string]string{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
-	res, err := h.api("POST", fmt.Sprintf("/services/%s/toggle", sub), payload)
-	if err != nil {
-		return err
-	}
-
-	if err := h.getResult(res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // TODO: Rework to return result list and work with it
 func (h *Hass) getResult(res []byte) error {
 	var result []HassResult
@@ -204,41 +158,5 @@ func (h *Hass) entityArgHandler(args []string, service string) (string, string, 
 	} else if len(args) == 2 {
 		return args[0], args[1], nil
 	}
-	return "", "", fmt.Errorf("splitHandler has to many entries in args: %d", len(args))
-}
-
-func (h *Hass) TurnOff(args ...string) (string, string, string, error) {
-	sub, obj, err := h.entityArgHandler(args, "turn_off")
-	if err != nil {
-		return "", "", "", err
-	}
-	return obj, "off", sub, h.turn("off", sub, obj)
-}
-
-func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
-	sub, obj, err := h.entityArgHandler(args, "turn_on")
-	if err != nil {
-		return "", "", "", err
-	}
-	return obj, "on", sub, h.turn("on", sub, obj)
-}
-
-func (h *Hass) Toggle(args ...string) (string, string, string, error) {
-	sub, obj, err := h.entityArgHandler(args, "toggle")
-	if err != nil {
-		return "", "", "", err
-	}
-	return obj, "toggle", sub, h.toggle(sub, obj)
-}
-
-func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {
-	return h.TurnOff("light", obj)
-}
-
-func (h *Hass) TurnLightOn(obj string) (string, string, string, error) {
-	return h.TurnOn("light", obj)
-}
-
-func (h *Hass) ToggleLight(obj string) (string, string, string, error) {
-	return h.Toggle("light", obj)
+	return "", "", fmt.Errorf("entityArgHandler has to many entries in args: %d", len(args))
 }

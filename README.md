@@ -76,12 +76,16 @@ mkdir -p ~/.config/hctl
 $EDITOR ~/.config/hctl/hctl.yaml
 ```
 
+## Completion
+
 To really benefit from all features, ensure you've loaded the bash completion
 
 ```bash
 # Bash (e.g. your ~/.bashrc)
 type hctl >/dev/null 2>&1 && source <(hctl completion bash)
 ```
+
+For more information on how to setup completion for `bash`, `zsh`, `fish` and `PowerShell`, see `hctl completion -h`
 
 ## Usage
 

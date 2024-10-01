@@ -30,9 +30,19 @@ hctl is a tool to control your Home Assistant (and maybe more in the future) dev
 
 ## Install
 
+### asdf
+
+```bash
+asdf plugin add hctl https://github.com/xx4h/asdf-hctl.git
+asdf global hctl latest
+```
+
+for more information see [asdf-hctl](https://github.com/xx4h/asdf-hctl)
+
 ### Go
 
 ```bash
+# version will be the latest tag, but will show version "dev"
 go install github.com/xx4h/hctl@latest
 ```
 

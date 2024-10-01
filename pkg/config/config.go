@@ -36,7 +36,6 @@ type Hub struct {
 
 type Completion struct {
 	ShortNames bool `yaml:"shortNames"`
-	WhatIf     bool `yaml:"whatif"`
 }
 
 type Handling struct {
@@ -60,7 +59,6 @@ func NewConfig() (*Config, error) {
 	// create empty config and set defaults
 	cfg := &Config{}
 	cfg.Completion.ShortNames = true
-	cfg.Completion.WhatIf = true
 	cfg.Handling.Fuzz = true
 	cfg.Logging.LogLevel = "error"
 

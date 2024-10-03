@@ -17,6 +17,7 @@ package pkg
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -156,6 +157,19 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		s.WaitAndClose()
 	}
+}
+
+func (h *Hctl) VolumeSet(obj string, volume string) {
+	vint, err := strconv.Atoi(volume)
+	if err != nil {
+		o.PrintError(err)
+	}
+	obj, state, sub, err := h.GetRest().VolumeSet(obj, vint)
+	if err != nil {
+		o.PrintError(err)
+	}
+	o.PrintSuccessAction(obj, state)
+	log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
 }
 
 func (h *Hctl) SetLogging(level string) error {

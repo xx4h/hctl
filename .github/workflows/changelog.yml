@@ -1,4 +1,5 @@
 # .github/workflows/release.yml
+#checkov:skip=CKV_GHA_7:We build changelog manually for now
 name: changelog
 
 on:

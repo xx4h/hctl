@@ -54,7 +54,7 @@ func (h *Hass) GetStates() []HassState {
 
 func (h *Hass) GetFilteredStates(domains []string) []HassState {
 	states := h.GetStates()
-	return RemoveDomainsFromStates(states, domains)
+	return FilterDomainsFromStates(states, domains)
 }
 
 func (h *Hass) GetFilteredStatesMap(domains []string) map[string][]string {

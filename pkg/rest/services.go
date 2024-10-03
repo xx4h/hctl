@@ -55,8 +55,8 @@ func (h *Hass) GetFilteredServices(domains []string, services []string) ([]HassS
 		return nil, err
 	}
 
-	s = RemoveDomainsFromServices(s, domains)
-	s = RemoveServicesFromServices(s, services)
+	s = FilterDomainsFromServices(s, domains)
+	s = FilterServicesFromServices(s, services)
 
 	return s, nil
 }

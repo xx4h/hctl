@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-func RemoveDomainsFromStates(s []HassState, domains []string) []HassState {
+func FilterDomainsFromStates(s []HassState, domains []string) []HassState {
 	if len(domains) == 0 {
 		return s
 	}
@@ -36,7 +36,7 @@ func RemoveDomainsFromStates(s []HassState, domains []string) []HassState {
 	return s
 }
 
-func RemoveDomainsFromServices(s []HassService, domains []string) []HassService {
+func FilterDomainsFromServices(s []HassService, domains []string) []HassService {
 	if len(domains) == 0 {
 		return s
 	}
@@ -52,7 +52,7 @@ func RemoveDomainsFromServices(s []HassService, domains []string) []HassService 
 	return s
 }
 
-func RemoveServicesFromServices(s []HassService, services []string) []HassService {
+func FilterServicesFromServices(s []HassService, services []string) []HassService {
 	if len(services) == 0 {
 		return s
 	}

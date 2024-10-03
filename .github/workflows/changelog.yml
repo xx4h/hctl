@@ -1,0 +1,26 @@
+# .github/workflows/release.yml
+name: release
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+  # packages: write
+  # issues: write
+  # id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build Changelog
+        id: github_release_changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+      - name: Update Release
+        uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
+        with:
+          body: ${{steps.github_release_changelog.outputs.changelog}}

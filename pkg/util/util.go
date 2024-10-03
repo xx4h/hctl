@@ -68,3 +68,19 @@ func GetLocalIP() string {
 	log.Debug().Msgf("Using local IP: %s", localAddress.IP)
 	return localAddress.IP.String()
 }
+
+func MakeRange(min, max int) []int {
+	a := make([]int, max-min+1)
+	for i := range a {
+		a[i] = min + i
+	}
+	return a
+}
+
+func MakeRangeString(min, max int) []string {
+	a := make([]string, max-min+1)
+	for i := range a {
+		a[i] = fmt.Sprint(min + i)
+	}
+	return a
+}

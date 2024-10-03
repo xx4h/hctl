@@ -61,15 +61,9 @@ jobs:
                         "on_property": "title"
                     }
                 ],
-                "sort": "ASC",
-                "template": "${{CHANGELOG}}",
-                "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}",
-                "empty_template": "- no changes",
-                "max_pull_requests": 1000,
-                "max_back_track_time_days": 1000
             }
       - name: Update Release
         uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
         with:
-          tag_name: ${{ to_tag }}
+          tag_name: ${{ github.event.inputs.to_tag }}
           body: ${{steps.github_release_changelog.outputs.changelog}}

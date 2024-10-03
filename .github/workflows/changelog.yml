@@ -31,8 +31,8 @@ jobs:
         id: github_release_changelog
         uses: mikepenz/release-changelog-builder-action@v5
         with:
-          fromTag: ${{ from_tag }}
-          toTag: ${{ to_tag }}
+          fromTag: ${{ github.event.inputs.from_tag }}
+          toTag: ${{ github.event.inputs.to_tag }}
           configurationJson: |
             {
                 "categories": [

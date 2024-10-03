@@ -22,6 +22,7 @@ hctl is a tool to control your Home Assistant (and maybe more in the future) dev
 ## Features
 
 - Support for Home Assistant
+- Play local and remote music files
 - List all Domains & Domain-Services
 - Turn on/off, or toggle all capable devices
 - Completion for `bash`, `zsh`, `fish` and `powershell`, auto completing all capable devices
@@ -106,6 +107,8 @@ hctl on floor1
 # Toggle a switch called "some-switch"
 hctl toggle some_switch
 
+# Play a local music file
+hctl play myplayer ~/path/to/some.mp3
 ```
 
 ### Completion Short Names
@@ -159,7 +162,7 @@ handling:
   fuzz: false
 ```
 
-## Roadmap
+## What's Next / Roadmap
 
 - [ ] Add more actions (like `press` e.g. Buttons, `trigger` e.g. Automations, or `lock` and `unlock` a Lock)
 - [ ] Add `config` command to actively set config options in the config file

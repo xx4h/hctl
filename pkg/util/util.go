@@ -14,6 +14,15 @@
 
 package util
 
+import (
+	"crypto/sha256"
+	"fmt"
+	"net"
+	u "net/url"
+
+	"github.com/rs/zerolog/log"
+)
+
 // Return a list of keys from the provided map
 // thanks to:
 //
@@ -30,6 +39,32 @@ func GetStringKeys(m map[string]any) []string {
 	return keys
 }
 
+func GetStringHash(s string) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
+}
+
 func RemoveIndex(s []any, index int) []any {
 	return append(s[:index], s[index+1:]...)
+}
+
+func IsURL(url string) bool {
+	up, err := u.Parse(url)
+	if err != nil || up.Scheme == "" || up.Host == "" {
+		return false
+	}
+	return true
+}
+
+func GetLocalIP() string {
+	log.Debug().Msg("Getting local IP")
+	conn, err := net.Dial("udp", "1.1.1.1:53")
+	if err != nil {
+		log.Fatal().Msgf("Error getting local IP: %v", err)
+	}
+	defer conn.Close()
+
+	localAddress := conn.LocalAddr().(*net.UDPAddr)
+
+	log.Debug().Msgf("Using local IP: %s", localAddress.IP)
+	return localAddress.IP.String()
 }

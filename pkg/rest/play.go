@@ -16,18 +16,18 @@ package rest
 
 import "fmt"
 
-func (h *Hass) toggle(sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, "toggle")
+func (h *Hass) play(mediaURL string, mediaType string, sub string, obj string) error {
+	hasDomain, err := h.hasDomainWithService(sub, "play_media")
 	if err != nil {
 		return err
 	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, "toggle")
+		return fmt.Errorf("No such Domain with Service: %s with %s", sub, "play_media")
 	}
 	if !h.hasEntityInDomain(obj, sub) {
 		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
 	}
-	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
-	res, err := h.api("POST", fmt.Sprintf("/services/%s/toggle", sub), payload)
+	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj), "media_content_id": mediaURL, "media_content_type": mediaType}
+	res, err := h.api("POST", fmt.Sprintf("/services/%s/play_media", sub), payload)
 	if err != nil {
 		return err
 	}
@@ -39,10 +39,10 @@ func (h *Hass) toggle(sub string, obj string) error {
 	return nil
 }
 
-func (h *Hass) Toggle(args ...string) (string, string, string, error) {
-	sub, obj, err := h.entityArgHandler(args, "toggle")
+func (h *Hass) PlayMusic(obj string, mediaURL string, name string) (string, string, string, error) {
+	sub, obj, err := h.entityArgHandler([]string{obj}, "play_media")
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "toggle", sub, h.toggle(sub, obj)
+	return obj, fmt.Sprintf("playing %s", name), sub, h.play(mediaURL, "music", sub, obj)
 }

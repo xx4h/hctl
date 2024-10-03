@@ -61,7 +61,7 @@ func (h *Hass) preflight() error {
 	return nil
 }
 
-func (h *Hass) api(meth string, path string, payload map[string]string) ([]byte, error) {
+func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, error) {
 	if err := h.preflight(); err != nil {
 		return []byte{}, err
 	}

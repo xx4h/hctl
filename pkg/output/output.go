@@ -15,6 +15,8 @@
 package output
 
 import (
+	"os"
+
 	"github.com/pterm/pterm"
 	"github.com/pterm/pterm/putils"
 )
@@ -35,6 +37,7 @@ func PrintSuccessAction(obj string, state string) {
 
 func PrintError(err error) {
 	pterm.Error.Println(err)
+	os.Exit(1)
 }
 
 func PrintThreeLevelFlatTree(name string, tree map[string][]string) error {

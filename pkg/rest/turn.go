@@ -26,7 +26,7 @@ func (h *Hass) turn(state string, sub string, obj string) error {
 	if !h.hasEntityInDomain(obj, sub) {
 		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
 	}
-	payload := map[string]string{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
+	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", sub, state), payload)
 	if err != nil {
 		return err

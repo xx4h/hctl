@@ -16,6 +16,7 @@ package pkg
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -24,6 +25,8 @@ import (
 	i "github.com/xx4h/hctl/pkg/init"
 	o "github.com/xx4h/hctl/pkg/output"
 	"github.com/xx4h/hctl/pkg/rest"
+	"github.com/xx4h/hctl/pkg/serve"
+	"github.com/xx4h/hctl/pkg/util"
 )
 
 type Hctl struct {
@@ -110,6 +113,48 @@ func (h *Hctl) DumpStates(domains []string) {
 	t := h.GetFilteredStatesMap(domains)
 	if err := o.PrintThreeLevelFlatTree("States", t); err != nil {
 		log.Error().Msgf("Error: %v", err)
+	}
+}
+
+func (h *Hctl) PlayMusic(obj string, mediaURL string) {
+	// handle url or file system path
+	if ok := util.IsURL(mediaURL); ok {
+		// if we already have a url, just play it
+
+		obj, state, sub, err := h.GetRest().PlayMusic(obj, mediaURL, mediaURL)
+		if err != nil {
+			o.PrintError(err)
+		}
+
+		o.PrintSuccessAction(obj, state)
+		log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+
+	} else {
+		// if we don't have a url but a filepath
+
+		// check if file exists
+		_, err := os.Stat(mediaURL)
+		if err != nil {
+			o.PrintError(err)
+		}
+
+		// get new Media instance
+		s := serve.NewMedia(h.cfg.GetServeIP(), h.cfg.GetServePort(), mediaURL)
+		// start instance and wait until ready
+		s.FileHandler()
+		if err := s.WaitForHTTPReady(); err != nil {
+			log.Fatal().Msgf("HTTP server ready error: %v", err)
+		}
+
+		// we are ready and send the url to play
+		obj, state, sub, err := h.GetRest().PlayMusic(obj, s.GetURL(), s.GetMediaName())
+		if err != nil {
+			o.PrintError(err)
+		}
+
+		o.PrintSuccessAction(obj, state)
+		log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+		s.WaitAndClose()
 	}
 }
 

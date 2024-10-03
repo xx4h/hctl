@@ -65,6 +65,7 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 		newCompletionCmd(),
 		newOnCmd(h),
 		newOffCmd(h, out),
+		newPlayCmd(h, out),
 	)
 
 	cmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", zerolog.ErrorLevel.String(), "Set the log level")

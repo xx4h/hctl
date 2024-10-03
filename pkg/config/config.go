@@ -25,6 +25,7 @@ type Config struct {
 	Completion Completion `yaml:"completion"`
 	Handling   Handling   `yaml:"handling"`
 	Logging    Logging    `yaml:"logging"`
+	Serve      Serve      `yaml:"serve"`
 	Viper      *viper.Viper
 }
 
@@ -46,6 +47,11 @@ type Logging struct {
 	LogLevel string `yaml:"log_level"`
 }
 
+type Serve struct {
+	IP   string `yaml:"ip"`
+	Port int    `yaml:"port"`
+}
+
 func NewConfig() (*Config, error) {
 	v := viper.New()
 
@@ -61,11 +67,13 @@ func NewConfig() (*Config, error) {
 	cfg.Completion.ShortNames = true
 	cfg.Handling.Fuzz = true
 	cfg.Logging.LogLevel = "error"
+	cfg.Serve.Port = 1337
 
 	// use defaults for viper as well
 	v.SetDefault("completion", &cfg.Completion)
 	v.SetDefault("handling", &cfg.Handling)
 	v.SetDefault("logging", &cfg.Logging)
+	v.SetDefault("serve", &cfg.Serve)
 
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
@@ -91,4 +99,12 @@ func NewConfig() (*Config, error) {
 	cfg.Viper = v
 
 	return cfg, nil
+}
+
+func (c *Config) GetServeIP() string {
+	return c.Serve.IP
+}
+
+func (c *Config) GetServePort() int {
+	return c.Serve.Port
 }

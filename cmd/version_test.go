@@ -34,7 +34,7 @@ func Test_printVersion(t *testing.T) {
 		},
 		"short version": {
 			true,
-			"(?m)^Version:.*\n^Commit:.*\n^Date:.*$",
+			"(?m)\\AVersion:.*\n^Commit:.*\n^Date:.*\n\\z",
 			"",
 		},
 	}

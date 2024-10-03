@@ -24,7 +24,7 @@ type Config struct {
 	Hub        Hub        `yaml:"hub"`
 	Completion Completion `yaml:"completion"`
 	Handling   Handling   `yaml:"handling"`
-	Logging    Logging    `yamn:"logging"`
+	Logging    Logging    `yaml:"logging"`
 	Viper      *viper.Viper
 }
 

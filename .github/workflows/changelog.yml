@@ -1,7 +1,17 @@
 # .github/workflows/release.yml
-name: release
+name: changelog
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      from_tag:
+        description: "Starting Tag"
+        required: true
+        type: string
+      to_tag:
+        description: "Release version"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -20,7 +30,46 @@ jobs:
       - name: Build Changelog
         id: github_release_changelog
         uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          fromTag: ${{ from_tag }}
+          toTag: ${{ to_tag }}
+          configurationJson: |
+            {
+                "categories": [
+                    {
+                      "title": "## 🚀 Features",
+                      "labels": ["feature","feat","Feature","Feat"]
+                    },
+                    {
+                      "title": "## 🐛 Fixes",
+                      "labels": ["fix","fixes", "bug", "bugs", "Fix", "Fixes", "Bug", "Bugs"]
+                    },
+                    {
+                      "title": "## 🧪 Tests",
+                      "labels": ["test", "tests", "Test", "Tests"]
+                    },
+                    {
+                      "title": "## 📦 Uncategorized",
+                      "labels": []
+                    }
+                  ],
+                "label_extractor": [
+                    {
+                        "pattern": "^.?(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test|tests).?.*",
+                        "target": "$1",
+                        "method": "regexr",
+                        "on_property": "title"
+                    }
+                ],
+                "sort": "ASC",
+                "template": "${{CHANGELOG}}",
+                "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}",
+                "empty_template": "- no changes",
+                "max_pull_requests": 1000,
+                "max_back_track_time_days": 1000
+            }
       - name: Update Release
         uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
         with:
+          tag_name: ${{ to_tag }}
           body: ${{steps.github_release_changelog.outputs.changelog}}

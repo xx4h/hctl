@@ -17,11 +17,11 @@ package rest
 import "fmt"
 
 func (h *Hass) VolumeSet(obj string, volume int) (string, string, string, error) {
-	sub, obj, err := h.entityArgHandler([]string{obj}, "play_media")
+	svc := "volume_set"
+	sub, obj, err := h.entityArgHandler([]string{obj}, svc)
 	if err != nil {
 		return "", "", "", err
 	}
-	svc := "volume_set"
 	hasDomain, err := h.hasDomainWithService(sub, svc)
 	if err != nil {
 		return "", "", "", err

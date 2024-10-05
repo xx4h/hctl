@@ -17,7 +17,10 @@
 
 <!-- markdownlint-enable no-empty-links -->
 
-hctl is a tool to control your Home Assistant (and maybe more in the future) devices from the command line
+hctl is a tool to control your Home Assistant devices from the command line
+
+I needed a tool to quickly control my devices from the command, focusing on easy to use and short commands to toggle or turn on/off lights, switches or even automations, play a mp3 from my local system, or change the volume of a media player.
+And here we are!
 
 ## Features
 

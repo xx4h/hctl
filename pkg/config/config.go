@@ -89,11 +89,11 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	logLevel := v.GetString("log_level")
+	logLevel := v.GetString("logging.log_level")
 	if logLevel != "" {
 		lvl, err := zerolog.ParseLevel(logLevel)
 		if err != nil {
-			return nil, err
+			log.Error().Msgf("Could not set log level: %v", err)
 		}
 		zerolog.SetGlobalLevel(lvl)
 	}

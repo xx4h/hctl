@@ -48,11 +48,13 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 		Short: "A command line tool to control your home automation",
 		Long:  fmt.Sprintf("%s\nHctl is a CLI tool to control your home automation", banner),
 		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
-			lvl, err := zerolog.ParseLevel(logLevel)
-			if err != nil {
-				return err
+			if logLevel != "" {
+				lvl, err := zerolog.ParseLevel(logLevel)
+				if err != nil {
+					return err
+				}
+				zerolog.SetGlobalLevel(lvl)
 			}
-			zerolog.SetGlobalLevel(lvl)
 			return nil
 		},
 	}
@@ -69,13 +71,12 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 		newVolumeCmd(h, out),
 	)
 
-	cmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", zerolog.ErrorLevel.String(), "Set the log level")
+	cmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", "", "Set the log level")
 
 	return cmd
 }
 
 func RunCmd() {
-	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	h, err := pkg.NewHctl()
 	if err != nil {

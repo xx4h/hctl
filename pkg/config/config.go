@@ -98,7 +98,7 @@ func NewConfig() (*Config, error) {
 		zerolog.SetGlobalLevel(lvl)
 	}
 
-	log.Debug().Msgf("Running with the following config: %#v", v)
+	log.Debug().Msgf("Running with the following config: %+v", cfg)
 
 	cfg.Viper = v
 

@@ -24,6 +24,8 @@ And here we are!
 
 ## Features
 
+<p align="center"><img src="/assets/demo.gif?raw=true"/></p>
+
 - Support for Home Assistant
 - Play local and remote music files
 - List all Domains & Domain-Services

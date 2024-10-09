@@ -21,35 +21,35 @@ import (
 )
 
 type Config struct {
-	Hub        Hub        `yaml:"hub"`
-	Completion Completion `yaml:"completion"`
-	Handling   Handling   `yaml:"handling"`
-	Logging    Logging    `yaml:"logging"`
-	Serve      Serve      `yaml:"serve"`
+	Hub        Hub        `mapstructure:"hub" yaml:"hub" json:"hub"`
+	Completion Completion `mapstructure:"completion" yaml:"completion" json:"completion"`
+	Handling   Handling   `mapstructure:"handling" yaml:"handling" json:"handling"`
+	Logging    Logging    `mapstructure:"logging" yaml:"logging" json:"logging"`
+	Serve      Serve      `mapstructure:"serve" yaml:"serve" json:"serve"`
 	Viper      *viper.Viper
 }
 
 type Hub struct {
-	Type  string `yaml:"type"`
-	URL   string `yaml:"url"`
-	Token string `yaml:"token"`
+	Type  string `mapstructure:"type" yaml:"type" json:"type"`
+	URL   string `mapstructure:"url" yaml:"url" json:"url"`
+	Token string `mapstructure:"token" yaml:"token" json:"token"`
 }
 
 type Completion struct {
-	ShortNames bool `yaml:"shortNames"`
+	ShortNames bool `mapstructure:"short_names" yaml:"short_names" json:"short_names"`
 }
 
 type Handling struct {
-	Fuzz bool `yaml:"fuzz"`
+	Fuzz bool `mapstructure:"fuzz" yaml:"fuzz" json:"fuzz"`
 }
 
 type Logging struct {
-	LogLevel string `yaml:"log_level"`
+	LogLevel string `mapstructure:"log_level" yaml:"log_level" json:"log_level"`
 }
 
 type Serve struct {
-	IP   string `yaml:"ip"`
-	Port int    `yaml:"port"`
+	IP   string `mapstructure:"ip" yaml:"ip" json:"ip"`
+	Port int    `mapstructure:"port" yaml:"port" json:"port"`
 }
 
 func NewConfig() (*Config, error) {

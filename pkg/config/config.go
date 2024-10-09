@@ -67,7 +67,11 @@ func NewConfig() (*Config, error) {
 	cfg.Completion.ShortNames = true
 	cfg.Handling.Fuzz = true
 	cfg.Logging.LogLevel = "error"
+	cfg.Serve.IP = ""
 	cfg.Serve.Port = 1337
+	cfg.Hub.Type = "hass"
+	cfg.Hub.URL = ""
+	cfg.Hub.Token = ""
 
 	// use defaults for viper as well
 	v.SetDefault("completion", &cfg.Completion)

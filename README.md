@@ -24,6 +24,8 @@ And here we are!
 
 ## Features
 
+<p align="center"><img alt="hctl showcase demo" src="/assets/demo.gif?raw=true"/></p>
+
 - Support for Home Assistant
 - Play local and remote music files
 - List all Domains & Domain-Services
@@ -92,10 +94,10 @@ $EDITOR ~/.config/hctl/hctl.yaml
 
 ## Completion
 
-To really benefit from all features, ensure you've loaded the bash completion
+To really benefit from all features, ensure you've loaded the shell completion
 
 ```bash
-# Bash (e.g. your ~/.bashrc)
+# For bash (e.g. in your ~/.bashrc)
 type hctl >/dev/null 2>&1 && source <(hctl completion bash)
 ```
 

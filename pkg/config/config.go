@@ -15,6 +15,13 @@
 package config
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -111,4 +118,158 @@ func (c *Config) GetServeIP() string {
 
 func (c *Config) GetServePort() int {
 	return c.Serve.Port
+}
+
+func (c *Config) getElement(p []string) (*reflect.Value, *reflect.Type, error) {
+	// create reflects for value and type
+	v := reflect.ValueOf(c)
+	t := reflect.TypeOf(c)
+
+	return getElementByYamlPath(p, v, t)
+}
+
+func getElementByYamlPath(p []string, v reflect.Value, t reflect.Type) (*reflect.Value, *reflect.Type, error) {
+	// resolve pointer
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+
+	// resolve pointer
+	if v.Kind() == reflect.Ptr {
+		v = reflect.Indirect(v)
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		typ := t.Field(i)
+
+		if typ.Tag.Get("yaml") == p[0] {
+			if field.Kind() == reflect.Struct {
+				return getElementByYamlPath(p[1:], field, typ.Type)
+			} else if len(p) == 1 {
+				return &field, &typ.Type, nil
+			}
+		}
+	}
+	return nil, nil, fmt.Errorf("no such config option: %s", strings.Join(p, "."))
+}
+
+func (c *Config) GetOptionsAsPaths() []string {
+	t := reflect.ValueOf(c.Viper.AllSettings())
+	return toPathSlice(t, "", []string{})
+}
+
+func toPathSlice(t reflect.Value, name string, dst []string) []string {
+	switch t.Kind() {
+	case reflect.Ptr, reflect.Interface:
+		return toPathSlice(t.Elem(), name, dst)
+
+	case reflect.Struct:
+		for i := 0; i < t.NumField(); i++ {
+			fname := t.Type().Field(i).Name
+			dst = toPathSlice(t.Field(i), strings.TrimLeft(name+"."+fname, "."), dst)
+		}
+
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < t.Len(); i++ {
+			dst = toPathSlice(t.Index(i), strings.TrimLeft(name+"."+strconv.Itoa(i), "."), dst)
+		}
+
+	case reflect.Map:
+		for _, key := range t.MapKeys() {
+			value := t.MapIndex(key)
+			dst = toPathSlice(value, strings.TrimLeft(name+"."+key.String(), "."), dst)
+		}
+
+	default:
+		return append(dst, name)
+	}
+	return dst
+}
+
+func (c *Config) GetValueByPath(p string) (string, error) {
+	log.Info().Msgf("Getting value for `%v`", p)
+	s := strings.Split(p, ".")
+	v, _, err := c.getElement(s)
+	if err != nil {
+		return "", err
+	}
+	switch v.Kind() {
+	case reflect.String:
+		return v.String(), nil
+	case reflect.Bool:
+		return fmt.Sprintf("%t", v.Bool()), nil
+	case reflect.Float32:
+		return fmt.Sprintf("%f", v.Float()), nil
+	case reflect.Float64:
+		return fmt.Sprintf("%f", v.Float()), nil
+	case reflect.Int:
+		return fmt.Sprintf("%d", v.Int()), nil
+	default:
+		return "", fmt.Errorf("unexpected type: %v", v.Type())
+	}
+}
+
+func (c *Config) SetValueByPath(p string, val any) error {
+	// set config element by path p and value v
+	log.Info().Msgf("Setting `%v` to `%v`", p, val)
+	s := strings.Split(p, ".")
+	v, _, err := c.getElement(s)
+	if err != nil {
+		return err
+	}
+
+	log.Debug().Msgf("Config before change: %+v", c)
+
+	switch v.Kind() {
+	case reflect.String:
+		v.SetString(val.(string))
+	case reflect.Bool:
+		e, err := strconv.ParseBool(val.(string))
+		if err != nil {
+			return err
+		}
+		v.SetBool(e)
+	case reflect.Float32:
+		e, err := strconv.ParseFloat(val.(string), 64)
+		if err != nil {
+			return err
+		}
+		v.SetFloat(e)
+	case reflect.Float64:
+		e, err := strconv.ParseFloat(val.(string), 64)
+		if err != nil {
+			return err
+		}
+		v.SetFloat(e)
+	case reflect.Int:
+		e, err := strconv.ParseInt(val.(string), 10, 64)
+		if err != nil {
+			return err
+		}
+		v.SetInt(e)
+	default:
+		return fmt.Errorf("unexpected type: %v", v.Type())
+	}
+
+	log.Debug().Msgf("Config after change: %+v", c)
+
+	// convert current config to byte slice
+	b, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+	// create new io.Reader from byte slice config
+	reader := bytes.NewReader(b)
+
+	// read in the byte slice config to viper instance
+	if err := c.Viper.ReadConfig(reader); err != nil {
+		return err
+	}
+
+	// finally write updated viper instance to file
+	if err := c.Viper.WriteConfig(); err != nil {
+		return err
+	}
+	return nil
 }

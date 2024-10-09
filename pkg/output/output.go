@@ -15,8 +15,10 @@
 package output
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/gosuri/uitable"
 	"github.com/pterm/pterm"
 	"github.com/pterm/pterm/putils"
 )
@@ -33,6 +35,15 @@ func PrintSuccess(str string) {
 
 func PrintSuccessAction(obj string, state string) {
 	pterm.Success.Printfln("%s %s", obj, state)
+}
+
+func PrintSuccessListWithHeader(header []interface{}, list [][]interface{}) {
+	table := uitable.New()
+	table.AddRow(header...)
+	for _, entry := range list {
+		table.AddRow(entry...)
+	}
+	fmt.Println(table)
 }
 
 func PrintError(err error) {

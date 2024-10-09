@@ -168,10 +168,8 @@ handling:
 ## What's Next / Roadmap
 
 - [ ] Add more actions (like `press` e.g. Buttons, `trigger` e.g. Automations, or `lock` and `unlock` a Lock)
-- [ ] Add `config` command to actively set config options in the config file
 - [ ] Add output/feedback on actions (e.g. use pterm)
 - [ ] Allow multiple devices on actions
-- [ ] Improve output and add filters to `list` (e.g. use pterm)
 - [ ] Add optional positional for `list entities`, following the same logic as in `toggle`, `on` and `off` (e.g. matching short names and fuzzy matching)
 - [ ] Add possibility to add local mappings for devices in config
 - [ ] Add install methods (native, asdf, ...)

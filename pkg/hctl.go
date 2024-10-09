@@ -59,6 +59,23 @@ func (h *Hctl) CompletionShortNamesEnabled() bool {
 	return h.cfg.Completion.ShortNames
 }
 
+func (h *Hctl) GetConfigValue(p string) any {
+	v, err := h.cfg.GetValueByPath(p)
+	if err != nil {
+		o.PrintError(err)
+	}
+	return v
+}
+
+func (h *Hctl) SetConfigValue(p string, v string) error {
+	err := h.cfg.SetValueByPath(p, v)
+	return err
+}
+
+func (h *Hctl) GetConfigOptionsAsPaths() []string {
+	return h.cfg.GetOptionsAsPaths()
+}
+
 func (h *Hctl) GetRest() *rest.Hass {
 	return rest.New(h.cfg.Hub.URL, h.cfg.Hub.Token, h.cfg.Handling.Fuzz)
 }

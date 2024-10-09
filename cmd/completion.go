@@ -140,3 +140,7 @@ func compListStates(_ string, ignoredStates []string, service string, state stri
 
 	return choices, cobra.ShellCompDirectiveNoFileComp
 }
+
+func compListConfig(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
+	return h.GetConfigOptionsAsPaths(), cobra.ShellCompDirectiveNoFileComp
+}

@@ -60,14 +60,14 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newVersionCmd(out),
+		newCompletionCmd(),
 		newInitCmd(h),
 		newListCmd(h),
-		newToggleCmd(h, out),
-		newCompletionCmd(),
-		newOnCmd(h),
 		newOffCmd(h, out),
+		newOnCmd(h),
 		newPlayCmd(h, out),
+		newToggleCmd(h, out),
+		newVersionCmd(out),
 		newVolumeCmd(h, out),
 	)
 

@@ -107,7 +107,7 @@ For more information on how to setup completion for `bash`, `zsh`, `fish` and `P
 **Optional**
 Shorten command to a minimum
 
-```
+```bash
 # this should at least work for bash and zsh
 alias h='hctl'
 source <(hctl completion bash | sed -e 's/hctl/h/g')

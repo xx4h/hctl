@@ -18,6 +18,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -60,14 +63,26 @@ type Serve struct {
 }
 
 func NewConfig() (*Config, error) {
+	userDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Warn().Msgf("Could not get user home directory: %v", err)
+	}
+
+	execFile, err := os.Executable()
+	if err != nil {
+		log.Warn().Msgf("Could not get file path of executable: %v", err)
+	}
+	execDir := filepath.Dir(execFile)
+
 	v := viper.New()
 
 	v.SetEnvPrefix("HCTL")
 	v.AutomaticEnv()
 	v.SetConfigType("yaml")
 	v.SetConfigName("hctl")
-	v.AddConfigPath("$HOME/.config/hctl")
 	v.AddConfigPath(".")
+	v.AddConfigPath(path.Join(userDir, ".config/hctl"))
+	v.AddConfigPath(execDir)
 
 	// create empty config and set defaults
 	cfg := &Config{}
@@ -105,6 +120,7 @@ func NewConfig() (*Config, error) {
 		zerolog.SetGlobalLevel(lvl)
 	}
 
+	log.Info().Msgf("Config file in use: %s", v.ConfigFileUsed())
 	log.Debug().Msgf("Running with the following config: %+v", cfg)
 
 	cfg.Viper = v

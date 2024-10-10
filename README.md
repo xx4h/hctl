@@ -104,6 +104,18 @@ type hctl >/dev/null 2>&1 && source <(hctl completion bash)
 
 For more information on how to setup completion for `bash`, `zsh`, `fish` and `PowerShell`, see `hctl completion -h`
 
+**Optional**
+Shorten command to a minimum
+
+```
+# this should at least work for bash and zsh
+alias h='hctl'
+source <(hctl completion bash | sed -e 's/hctl/h/g')
+
+# afterwards toggling `switch.livingroom_warp` (with `Short Names` and `Fuzzy Matching` enabled) can be used like this
+h t lw
+```
+
 ## Usage
 
 ```bash

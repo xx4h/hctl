@@ -15,9 +15,12 @@
 package init
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
+	"net/http"
 	u "net/url"
 	"os"
 	"path/filepath"
@@ -39,6 +42,11 @@ func InitializeConfig(c *config.Config, configPath string) error {
 		hub.Type = getHubType()
 		hub.URL = getURL()
 		hub.Token = getToken()
+
+		if err := testAPI(hub.URL, hub.Token); err != nil {
+			log.Error().Msgf("API test failed: %v", err)
+			return InitializeConfig(c, configPath)
+		}
 
 		c.Viper.Set("hub", &hub)
 		configDir := filepath.Dir(configPath)
@@ -103,4 +111,47 @@ func getToken() string {
 		return getToken()
 	}
 	return token
+}
+
+func testAPI(url string, token string) error {
+	c := &http.Client{}
+	req, err := http.NewRequest("GET", url+"/", nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	log.Debug().Msgf("Running API test: %+v", req)
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode == http.StatusUnauthorized {
+		return fmt.Errorf("invalid token")
+	} else if resp.StatusCode != http.StatusOK {
+		log.Debug().Msgf("unexpected API return code (%d) returned: %v", resp.StatusCode, string(body))
+		return fmt.Errorf("unexpected API return code: %d", resp.StatusCode)
+	}
+
+	var a map[string]string
+	if err := json.Unmarshal(body, &a); err != nil {
+		log.Debug().Msgf("unexpected API return: %v", string(body))
+		return fmt.Errorf("unexpected API return, did you provide the correct API URL?")
+	}
+
+	v, ok := a["message"]
+	if !ok {
+		return fmt.Errorf("unexpected API return message: %v", a)
+	}
+	log.Info().Msgf("API Returned: %s", v)
+	return nil
 }

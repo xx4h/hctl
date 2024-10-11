@@ -17,15 +17,10 @@ package rest
 import "fmt"
 
 func (h *Hass) turn(state string, sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, fmt.Sprintf("turn_%s", state))
-	if err != nil {
-		return err
-	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, fmt.Sprintf("turn_%s", state))
-	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
+	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
+	// 	return err
+	// }
+
 	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", sub, state), payload)
 	if err != nil {

@@ -108,55 +108,88 @@ func (h *Hass) getResult(res []byte) error {
 		return err
 	}
 
-	log.Debug().Msgf("Result: %#v", result)
-
+	log.Debug().Caller().Msgf("Result: %#v", result)
 	return nil
+}
+
+func getFuzz(name string, names []string) (int, bool) {
+	// get all fuzzy matches with ranks
+	ranks := fuzzy.RankFind(name, names)
+	log.Debug().Caller().Msgf("Found Fuzzy Matches: %+v", ranks)
+
+	// As Levenshtein is only positive, starting distance -1 is also indicator if there is a match
+	distance := -1
+	var position int
+
+	// go through found fuzzy matches with ranks
+	for m := range ranks {
+		// Levenshtein distance is lower than current
+		if distance == -1 || ranks[m].Distance < distance {
+			// save new current distance
+			distance = ranks[m].Distance
+			// save position of original index
+			position = ranks[m].OriginalIndex
+		}
+	}
+	return position, distance > -1
 }
 
 // Find matching entity for provided service
 // Return error if none has been found
-func (h *Hass) findEntity(obj string, svc string) (string, string, error) {
-	states, err := h.GetStatesWithService(svc)
+func (h *Hass) findEntity(name string, domain string, service string) (string, string, error) {
+	states, err := h.GetStatesWithService(service)
 	if err != nil {
 		return "", "", err
 	}
 
 	var names []string
-	var position int
-	distance := 999
 
-	for d := range states {
-		s := strings.Split(states[d].EntityID, ".")
+	for i := range states {
+		d, n := splitDomainAndName(states[i].EntityID)
+		// when domain is set, but not matching, we can continue
+		if domain != "" && domain != d {
+			continue
+		}
+		// domain unset or matching
+		// directly return find when entity matches name
+		if n == name {
+			return d, n, nil
+		}
+
+		// add to fuzz checker names list when fuzz enabled
 		if h.Fuzz {
-			names = append(names, s[1])
-		} else if s[1] == obj {
-			return s[0], s[1], nil
+			names = append(names, n)
 		}
 	}
+
+	// when fuzz enabled
 	if h.Fuzz {
-		ranks := fuzzy.RankFind(obj, names)
-		log.Debug().Msgf("Found Fuzzy Matches: %+v", ranks)
-		var found bool
-		for m := range ranks {
-			if ranks[m].Distance < distance {
-				distance = ranks[m].Distance
-				position = ranks[m].OriginalIndex
-				found = true
-			}
-		}
-		if found {
-			s := strings.Split(states[position].EntityID, ".")
-			return s[0], s[1], nil
+		if p, ok := getFuzz(name, names); ok {
+			d, n := splitDomainAndName(states[p].EntityID)
+			// get domain and entity name from original states array by position
+			return d, n, nil
 		}
 	}
-	return "", "", fmt.Errorf("No Entity %s capable of %s", obj, svc)
+	return "", "", fmt.Errorf("No Entity %s capable of %s", name, service)
 }
 
 func (h *Hass) entityArgHandler(args []string, service string) (string, string, error) {
 	if len(args) == 1 {
-		return h.findEntity(args[0], service)
+		domain, name := splitDomainAndName(args[0])
+		return h.findEntity(name, domain, service)
 	} else if len(args) == 2 {
 		return args[0], args[1], nil
 	}
 	return "", "", fmt.Errorf("entityArgHandler has to many entries in args: %d", len(args))
+}
+
+// Returns domain, name
+func splitDomainAndName(s string) (string, string) {
+	p := strings.Split(s, ".")
+	// we don't have any dots, so we only have a name
+	if len(p) == 1 {
+		return "", p[0]
+	}
+	// at least one dot, first element is considered the domain
+	return p[0], strings.Join(p[1:], ".")
 }

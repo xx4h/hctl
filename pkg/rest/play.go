@@ -17,16 +17,12 @@ package rest
 import "fmt"
 
 func (h *Hass) play(mediaURL string, mediaType string, sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, "play_media")
-	if err != nil {
-		return err
-	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, "play_media")
+	payload := map[string]any{
+		"entity_id":          fmt.Sprintf("%s.%s", sub, obj),
+		"media_content_id":   mediaURL,
+		"media_content_type": mediaType,
 	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
-	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj), "media_content_id": mediaURL, "media_content_type": mediaType}
+
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/play_media", sub), payload)
 	if err != nil {
 		return err
@@ -35,7 +31,6 @@ func (h *Hass) play(mediaURL string, mediaType string, sub string, obj string) e
 	if err := h.getResult(res); err != nil {
 		return err
 	}
-
 	return nil
 }
 

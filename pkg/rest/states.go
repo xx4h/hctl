@@ -30,48 +30,59 @@ type HassState struct {
 
 // TODO: Add sort, configurable, maybe even something like GetSortedStates(order ...string)?
 // Get all states from Hass
-func (h *Hass) GetStates() []HassState {
+func (h *Hass) GetStates() ([]HassState, error) {
 	if h.States != nil {
 		log.Info().Msg("Using cached states.")
-		return h.States
+		return h.States, nil
 	}
 
 	res, err := h.api("GET", "/states", nil)
 	if err != nil {
-		log.Error().Msgf("Error: %v", err)
+		log.Debug().Caller().Msgf("Error: %+v", err)
+		return nil, err
 	}
 
 	states := []HassState{}
 	err = json.Unmarshal(res, &states)
 	if err != nil {
-		log.Error().Msgf("Could not create Services Object: %v", err)
+		log.Debug().Caller().Msgf("Could not create Services Object: %+v", err)
+		return nil, err
 	}
 
 	h.States = states
 
-	return states
+	return states, nil
 }
 
-func (h *Hass) GetFilteredStates(domains []string) []HassState {
-	states := h.GetStates()
-	return FilterDomainsFromStates(states, domains)
+func (h *Hass) GetFilteredStates(domains []string) ([]HassState, error) {
+	states, err := h.GetStates()
+	if err != nil {
+		return nil, err
+	}
+	return FilterDomainsFromStates(states, domains), nil
 }
 
-func (h *Hass) GetFilteredStatesMap(domains []string) map[string][]string {
-	states := h.GetFilteredStates(domains)
+func (h *Hass) GetFilteredStatesMap(domains []string) (map[string][]string, error) {
+	states, err := h.GetFilteredStates(domains)
+	if err != nil {
+		return nil, err
+	}
 	t := make(map[string][]string)
 	for state := range states {
 		elist := strings.Split(states[state].EntityID, ".")
 		t[elist[0]] = append(t[elist[0]], elist[1])
 	}
-	return t
+	return t, nil
 }
 
 func (h *Hass) GetStatesWithService(service string) ([]HassState, error) {
 	var domainsWithService []string
 	var statesWithService []HassState
 
-	states := h.GetStates()
+	states, err := h.GetStates()
+	if err != nil {
+		return statesWithService, err
+	}
 	services, err := h.GetServices()
 	if err != nil {
 		return statesWithService, err
@@ -93,16 +104,4 @@ func (h *Hass) GetStatesWithService(service string) ([]HassState, error) {
 	}
 
 	return statesWithService, nil
-}
-
-func (h *Hass) hasEntityInDomain(state string, domain string) bool {
-	states := h.GetStates()
-
-	for d := range states {
-		s := strings.Split(states[d].EntityID, ".")
-		if domain == s[0] && state == s[1] {
-			return true
-		}
-	}
-	return false
 }

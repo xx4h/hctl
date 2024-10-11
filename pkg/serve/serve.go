@@ -65,7 +65,7 @@ func (m *Media) GetMediaName() string {
 func (m *Media) serveFile() {
 	defer m.wg.Done()
 
-	log.Debug().Msgf("Starting local HTTP server: %s:%d", m.ip, m.port)
+	log.Debug().Caller().Msgf("Starting local HTTP server: %s:%d", m.ip, m.port)
 
 	mux := http.NewServeMux()
 	m.srv = &http.Server{
@@ -78,7 +78,7 @@ func (m *Media) serveFile() {
 
 	mux.HandleFunc(fmt.Sprintf("/%s", m.serveName), func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, m.path)
-		log.Debug().Msgf("File requested: /%s -> %s", m.serveName, m.path)
+		log.Debug().Caller().Msgf("File requested: /%s -> %s", m.serveName, m.path)
 	})
 
 	mux.HandleFunc("/ready", func(w http.ResponseWriter, _ *http.Request) {
@@ -101,16 +101,16 @@ func (m *Media) WaitForHTTPReady() error {
 	readyEndpoint := fmt.Sprintf("http://%s:%d/ready", m.ip, m.port)
 	tries := 10
 	var err error
-	log.Debug().Msg("Waiting for HTTP server to be ready")
+	log.Debug().Caller().Msg("Waiting for HTTP server to be ready")
 	for i := 0; i < tries; i++ {
-		log.Debug().Msgf("Checking readiness endpoint: %s", readyEndpoint)
+		log.Debug().Caller().Msgf("Checking readiness endpoint: %s", readyEndpoint)
 		resp, err := http.Get(readyEndpoint) // nolint:gosec
 		if err != nil {
 			time.Sleep(200 * time.Millisecond)
 			continue
 		}
 		defer resp.Body.Close()
-		log.Debug().Msg("HTTP server is ready")
+		log.Debug().Caller().Msg("HTTP server is ready")
 		return nil
 	}
 	return err
@@ -120,14 +120,14 @@ func (m *Media) WaitAndClose() error {
 	var count int
 	for {
 		conns := m.cw.Connections()
-		time.Sleep(200 * time.Millisecond)
 		if len(conns) == 0 {
 			break
 		}
 		if count%2 == 0 {
-			log.Debug().Msgf("Waiting for connection to close: %#v", conns[0].RemoteAddr().String())
+			log.Debug().Caller().Msgf("Waiting for connection to close: %#v", conns[0].RemoteAddr().String())
 		}
 		count++
+		time.Sleep(200 * time.Millisecond)
 	}
 	if err := m.srv.Close(); err != nil {
 		return err

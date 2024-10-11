@@ -17,16 +17,9 @@ package rest
 import "fmt"
 
 func (h *Hass) toggle(sub string, obj string) error {
-	hasDomain, err := h.hasDomainWithService(sub, "toggle")
-	if err != nil {
-		return err
-	} else if !hasDomain {
-		return fmt.Errorf("No such Domain with Service: %s with %s", sub, "toggle")
+	payload := map[string]any{
+		"entity_id": fmt.Sprintf("%s.%s", sub, obj),
 	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
-	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/toggle", sub), payload)
 	if err != nil {
 		return err
@@ -35,7 +28,6 @@ func (h *Hass) toggle(sub string, obj string) error {
 	if err := h.getResult(res); err != nil {
 		return err
 	}
-
 	return nil
 }
 

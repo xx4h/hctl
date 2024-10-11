@@ -22,16 +22,11 @@ func (h *Hass) VolumeSet(obj string, volume int) (string, string, string, error)
 	if err != nil {
 		return "", "", "", err
 	}
-	hasDomain, err := h.hasDomainWithService(sub, svc)
-	if err != nil {
-		return "", "", "", err
-	} else if !hasDomain {
-		return "", "", "", fmt.Errorf("No such Domain with Service: %s with %s", sub, svc)
+
+	payload := map[string]any{
+		"entity_id":    fmt.Sprintf("%s.%s", sub, obj),
+		"volume_level": fmt.Sprintf("%.2f", float32(volume)/100),
 	}
-	if !h.hasEntityInDomain(obj, sub) {
-		return "", "", "", fmt.Errorf("No such Entity in Domain: %s in %s", obj, sub)
-	}
-	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj), "volume_level": fmt.Sprintf("%.2f", float32(volume)/100)}
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/%s", sub, svc), payload)
 	if err != nil {
 		return "", "", "", err
@@ -40,6 +35,5 @@ func (h *Hass) VolumeSet(obj string, volume int) (string, string, string, error)
 	if err := h.getResult(res); err != nil {
 		return "", "", "", err
 	}
-
 	return obj, fmt.Sprintf("volume set to %d%%", volume), sub, nil
 }

@@ -1,18 +1,23 @@
 # hctl
 
+<p align="center">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/xx4h/hctl">
+  <img alt="GitHub stars" src="https://img.shields.io/github/stars/xx4h/hctl">
+</p>
+
 <!-- markdownlint-disable no-empty-links -->
 
 [![Lint Code Base](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/xx4h/hctl/total)](https://github.com/xx4h/hctl/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xx4h/hctl?)](https://goreportcard.com/report/github.com/xx4h/hctl)
 [![codebeat badge](https://codebeat.co/badges/21ee1b92-b94c-4425-a600-b01dd4b1c045)](https://codebeat.co/projects/github-com-xx4h-hctl-main)
 [![SLOC](https://tokei.rs/b1/github/xx4h/hctl?category=code&style=flat)](#)
 [![Number of programming languages used](https://img.shields.io/github/languages/count/xx4h/hctl)](#)
 [![Top programming languages used](https://img.shields.io/github/languages/top/xx4h/hctl)](#)
-[![Open issues](https://img.shields.io/github/issues/xx4h/hctl)](https://github.com/xx4h/hctl/issues)
-[![Closed issues](https://img.shields.io/github/issues-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/issues?q=is%3Aissue+is%3Aclosed)
-[![Closed PRs](https://img.shields.io/github/issues-pr-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/pulls?q=is%3Apr+is%3Aclosed)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Latest tag](https://img.shields.io/github/v/tag/xx4h/hctl)](https://github.com/xx4h/hctl/tags)
+[![Closed issues](https://img.shields.io/github/issues-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/issues?q=is%3Aissue+is%3Aclosed)
+[![Closed PRs](https://img.shields.io/github/issues-pr-closed/xx4h/hctl?color=success)](https://github.com/xx4h/hctl/pulls?q=is%3Apr+is%3Aclosed)
 <br>
 
 <!-- markdownlint-enable no-empty-links -->

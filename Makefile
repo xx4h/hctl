@@ -9,16 +9,23 @@ GOBIN					= $(shell go env GOBIN)
 ifeq ($(GOBIN),)
 	GOBIN 			= $(shell go env GOPATH)/bin
 endif
-GOX						= $(GOBIN)/gox
 GOIMPORTS			= $(GOBIN)/goimports
 ARCH					= $(shell go env GOARCH)
+
+GIT_COMMIT		= $(shell git rev-parse HEAD)
+GIT_SHA				= $(shell git rev-parse --short HEAD)
+GIT_TAG				= $(shell git describe --tags --abrev=0 --exact-match 2>/dev/null)
+GIT_DIRTY			= $(shell test -n "`git status --porcelain`" && echo "dirty" || echo "clean")
 
 # go option
 PKG						:= ./...
 TAGS					:=
 TESTS					:= .
 TESTFLAGS			:=
-LDFLAGS				:= -w -s
+LDFLAGS				:= -w -s\
+								 -X github.com/xx4h/hctl/cmd.version=$(shell git rev-parse --abbrev-ref HEAD)-$(GIT_DIRTY)\
+								 -X github.com/xx4h/hctl/cmd.commit=$(GIT_COMMIT)\
+								 -X github.com/xx4h/hctl/cmd.date=$(shell date -Iseconds)
 GOFLAGS				:=
 CGO_ENABLED		?= 0
 
@@ -27,11 +34,6 @@ SRC						:= $(shell find . -type f -name '*.go' -print) go.mod go.sum
 
 # required for flobs to work correctly
 SHELL					= /usr/bin/env bash
-
-GIT_COMMIT		= $(shell git rev-parse HEAD)
-GIT_SHA				= $(shell git rev-parse --short HEAD)
-GIT_TAG				= $(shell git describe --tags --abrev=0 --exact-match 2>/dev/null)
-GIT_DIRTY			= $(shell test -n "`git status --porcelain`" && echo "dirty" || echo "clean")
 
 ifdef VERSION
 	BINARY_VERSION = $(VERSION)

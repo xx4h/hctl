@@ -117,8 +117,14 @@ func noMoreArgsComp() ([]string, cobra.ShellCompDirective) {
 
 // support function for completion
 func compListStates(_ string, ignoredStates []string, service string, state string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
-	states := h.GetStates()
-	services := h.GetServices()
+	states, err := h.GetStates()
+	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
+	}
+	services, err := h.GetServices()
+	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
+	}
 
 	filteredStates := filterStates(states, ignoredStates)
 	filteredStates = filterCapable(filteredStates, services, service, state)

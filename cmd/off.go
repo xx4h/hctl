@@ -44,7 +44,7 @@ func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			} else {
 				o.PrintSuccessAction(obj, state)
 			}
-			log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		},
 	}
 

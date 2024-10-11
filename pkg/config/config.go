@@ -103,7 +103,7 @@ func NewConfig() (*Config, error) {
 
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Debug().Msgf("Config File not found! Please run `hctl init` or manually create %s", v.ConfigFileUsed())
+			log.Debug().Caller().Msgf("Config File not found! Please run `hctl init` or manually create %s", v.ConfigFileUsed())
 		}
 	}
 
@@ -121,7 +121,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	log.Info().Msgf("Config file in use: %s", v.ConfigFileUsed())
-	log.Debug().Msgf("Running with the following config: %+v", cfg)
+	log.Debug().Caller().Msgf("Running with the following config: %+v", cfg)
 
 	cfg.Viper = v
 
@@ -235,7 +235,7 @@ func (c *Config) SetValueByPath(p string, val any) error {
 		return err
 	}
 
-	log.Debug().Msgf("Config before change: %+v", c)
+	log.Debug().Caller().Msgf("Config before change: %+v", c)
 
 	switch v.Kind() {
 	case reflect.String:
@@ -268,7 +268,7 @@ func (c *Config) SetValueByPath(p string, val any) error {
 		return fmt.Errorf("unexpected type: %v", v.Type())
 	}
 
-	log.Debug().Msgf("Config after change: %+v", c)
+	log.Debug().Caller().Msgf("Config after change: %+v", c)
 
 	// convert current config to byte slice
 	b, err := json.Marshal(c)

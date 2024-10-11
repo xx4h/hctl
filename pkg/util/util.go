@@ -56,7 +56,7 @@ func IsURL(url string) bool {
 }
 
 func GetLocalIP() string {
-	log.Debug().Msg("Getting local IP")
+	log.Debug().Caller().Msg("Getting local IP")
 	conn, err := net.Dial("udp", "1.1.1.1:53")
 	if err != nil {
 		log.Fatal().Msgf("Error getting local IP: %v", err)
@@ -65,7 +65,7 @@ func GetLocalIP() string {
 
 	localAddress := conn.LocalAddr().(*net.UDPAddr)
 
-	log.Debug().Msgf("Using local IP: %s", localAddress.IP)
+	log.Debug().Caller().Msgf("Using local IP: %s", localAddress.IP)
 	return localAddress.IP.String()
 }
 

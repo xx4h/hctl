@@ -49,6 +49,7 @@ func NewHctl() (*Hctl, error) {
 
 func (h *Hctl) InitializeConfig(path string) {
 	if err := i.InitializeConfig(h.cfg, path); err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
 		o.PrintError(err)
 	} else {
 		o.PrintSuccess(fmt.Sprintf("Successfully created config: %s\n", path))
@@ -62,6 +63,7 @@ func (h *Hctl) CompletionShortNamesEnabled() bool {
 func (h *Hctl) GetConfigValue(p string) any {
 	v, err := h.cfg.GetValueByPath(p)
 	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
 		o.PrintError(err)
 	}
 	return v
@@ -80,57 +82,63 @@ func (h *Hctl) GetRest() *rest.Hass {
 	return rest.New(h.cfg.Hub.URL, h.cfg.Hub.Token, h.cfg.Handling.Fuzz)
 }
 
-func (h *Hctl) GetServices() []rest.HassService {
+func (h *Hctl) GetServices() ([]rest.HassService, error) {
 	services, err := h.GetRest().GetServices()
 	if err != nil {
-		log.Fatal().Msgf("Error: %v", err)
-		return nil
+		log.Fatal().Msgf("Error: %+v", err)
+		return nil, err
 	}
-	return services
+	return services, nil
 }
 
-func (h *Hctl) GetStates() []rest.HassState {
-	states := h.GetRest().GetStates()
-	return states
+func (h *Hctl) GetStates() ([]rest.HassState, error) {
+	states, err := h.GetRest().GetStates()
+	if err != nil {
+		return nil, err
+	}
+	return states, nil
 }
 
 func (h *Hctl) GetFilteredServices(domains []string, services []string) []rest.HassService {
 	s, err := h.GetRest().GetFilteredServices(domains, services)
 	if err != nil {
-		log.Fatal().Msgf("Error: %v", err)
+		log.Fatal().Msgf("Error: %+v", err)
 		return nil
 	}
 	return s
 }
 
-func (h *Hctl) GetFilteredStates(domains []string) []rest.HassState {
+func (h *Hctl) GetFilteredStates(domains []string) ([]rest.HassState, error) {
 	return h.GetRest().GetFilteredStates(domains)
 }
 
 func (h *Hctl) GetFilteredServicesMap(domains []string, services []string) map[string][]string {
 	t, err := h.GetRest().GetFilteredServicesMap(domains, services)
 	if err != nil {
-		log.Fatal().Msgf("Error: %v", err)
+		log.Fatal().Msgf("Error: %+v", err)
 		return nil
 	}
 	return t
 }
 
-func (h *Hctl) GetFilteredStatesMap(domains []string) map[string][]string {
+func (h *Hctl) GetFilteredStatesMap(domains []string) (map[string][]string, error) {
 	return h.GetRest().GetFilteredStatesMap(domains)
 }
 
 func (h *Hctl) DumpServices(domains []string, services []string) {
 	t := h.GetFilteredServicesMap(domains, services)
 	if err := o.PrintThreeLevelFlatTree("Services", t); err != nil {
-		log.Error().Msgf("Error: %v", err)
+		log.Error().Msgf("Error: %+v", err)
 	}
 }
 
 func (h *Hctl) DumpStates(domains []string) {
-	t := h.GetFilteredStatesMap(domains)
+	t, err := h.GetFilteredStatesMap(domains)
+	if err != nil {
+		o.PrintError(err)
+	}
 	if err := o.PrintThreeLevelFlatTree("States", t); err != nil {
-		log.Error().Msgf("Error: %v", err)
+		log.Error().Msgf("Error: %+v", err)
 	}
 }
 
@@ -141,11 +149,12 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 
 		obj, state, sub, err := h.GetRest().PlayMusic(obj, mediaURL, mediaURL)
 		if err != nil {
+			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.PrintError(err)
 		}
 
 		o.PrintSuccessAction(obj, state)
-		log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+		log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 
 	} else {
 		// if we don't have a url but a filepath
@@ -153,6 +162,7 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		// check if file exists
 		_, err := os.Stat(mediaURL)
 		if err != nil {
+			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.PrintError(err)
 		}
 
@@ -161,17 +171,18 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		// start instance and wait until ready
 		s.FileHandler()
 		if err := s.WaitForHTTPReady(); err != nil {
-			log.Fatal().Msgf("HTTP server ready error: %v", err)
+			log.Fatal().Msgf("HTTP server ready error: %+v", err)
 		}
 
 		// we are ready and send the url to play
 		obj, state, sub, err := h.GetRest().PlayMusic(obj, s.GetURL(), s.GetMediaName())
 		if err != nil {
+			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.PrintError(err)
 		}
 
 		o.PrintSuccessAction(obj, state)
-		log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+		log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		s.WaitAndClose()
 	}
 }
@@ -179,14 +190,16 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 func (h *Hctl) VolumeSet(obj string, volume string) {
 	vint, err := strconv.Atoi(volume)
 	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
 		o.PrintError(err)
 	}
 	obj, state, sub, err := h.GetRest().VolumeSet(obj, vint)
 	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
 		o.PrintError(err)
 	}
 	o.PrintSuccessAction(obj, state)
-	log.Debug().Msgf("Result: %s(%s) to %s", obj, sub, state)
+	log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 }
 
 func (h *Hctl) SetLogging(level string) error {

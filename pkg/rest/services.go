@@ -74,24 +74,3 @@ func (h *Hass) GetFilteredServicesMap(domains []string, services []string) (map[
 	}
 	return t, nil
 }
-
-// function to check if domain with service exists
-func (h *Hass) hasDomainWithService(domain string, service string) (bool, error) {
-	services, err := h.GetServices()
-	if err != nil {
-		return false, err
-	}
-
-	for _, svc := range services {
-		if svc.Domain == domain {
-			for n := range svc.Services {
-				if n == service {
-					return true, nil
-				}
-			}
-			// domain exists only once
-			return false, nil
-		}
-	}
-	return false, nil
-}

@@ -122,7 +122,7 @@ func testAPI(url string, token string) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
-	log.Debug().Msgf("Running API test: %+v", req)
+	log.Debug().Caller().Msgf("Running API test: %+v", req)
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -138,13 +138,13 @@ func testAPI(url string, token string) error {
 	if resp.StatusCode == http.StatusUnauthorized {
 		return fmt.Errorf("invalid token")
 	} else if resp.StatusCode != http.StatusOK {
-		log.Debug().Msgf("unexpected API return code (%d) returned: %v", resp.StatusCode, string(body))
+		log.Debug().Caller().Msgf("unexpected API return code (%d) returned: %v", resp.StatusCode, string(body))
 		return fmt.Errorf("unexpected API return code: %d", resp.StatusCode)
 	}
 
 	var a map[string]string
 	if err := json.Unmarshal(body, &a); err != nil {
-		log.Debug().Msgf("unexpected API return: %v", string(body))
+		log.Debug().Caller().Msgf("unexpected API return: %v", string(body))
 		return fmt.Errorf("unexpected API return, did you provide the correct API URL?")
 	}
 

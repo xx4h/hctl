@@ -117,9 +117,9 @@ func Test_isJwtToken(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			isJwt := isJwtToken(tt.jwt)
+			isJwt, err := isJwtToken(tt.jwt)
 			if isJwt != tt.isJwt {
-				t.Errorf("got %t, want %t", isJwt, tt.isJwt)
+				t.Errorf("got %t, want %t (error: %v)", isJwt, tt.isJwt, err)
 			}
 		})
 	}

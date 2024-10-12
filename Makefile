@@ -40,7 +40,15 @@ ifdef VERSION
 endif
 
 .PHONY: all
-all: build
+all: clean
+all: format
+all: test
+all: test-unit
+all: test-goreleaser
+
+.PHONY: all-local-install
+all-local-install: all
+all-local-install: local-install
 
 # ---
 # build

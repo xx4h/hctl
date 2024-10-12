@@ -63,7 +63,7 @@ func (h *Hass) preflight() error {
 
 func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, error) {
 	if err := h.preflight(); err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 	client := &http.Client{}
 	var req *http.Request
@@ -71,16 +71,16 @@ func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, er
 	if payload != nil {
 		jayload, err := json.Marshal(payload)
 		if err != nil {
-			return []byte{}, nil
+			return nil, err
 		}
 		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), bytes.NewBuffer(jayload))
 		if err != nil {
-			return []byte{}, nil
+			return nil, err
 		}
 	} else {
 		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), nil)
 		if err != nil {
-			return []byte{}, nil
+			return nil, err
 		}
 	}
 	log.Info().Msgf("Requesting URL %s, Method %s, Payload: %#v", req.URL, req.Method, payload)
@@ -89,12 +89,12 @@ func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, er
 
 	res, err := client.Do(req)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	rData, err := io.ReadAll(res.Body)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	return rData, nil

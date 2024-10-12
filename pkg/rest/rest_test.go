@@ -15,24 +15,66 @@
 package rest
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 )
 
-func mockServerGetDataFromFile(t testing.TB, testdatafile string) *httptest.Server {
+func mockServer(t testing.TB) *httptest.Server {
 	t.Helper()
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		data, err := os.ReadFile(fmt.Sprintf("testdata/%s", testdatafile))
+		if _, err := w.Write([]byte(`{"message": "API running."}`)); err != nil {
+			t.Errorf("Error writing data: %v", err)
+		}
+	})
+	mux.HandleFunc("/services", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		data, err := os.ReadFile("testdata/services.json")
 		if err != nil {
 			t.Errorf("Error reading file: %v", err)
 		}
 		if _, err := w.Write(data); err != nil {
 			t.Errorf("Error writing data: %v", err)
 		}
-	}))
+	})
+	mux.HandleFunc("/states", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		data, err := os.ReadFile("testdata/states.json")
+		if err != nil {
+			t.Errorf("Error reading file: %v", err)
+		}
+		if _, err := w.Write(data); err != nil {
+			t.Errorf("Error writing data: %v", err)
+		}
+	})
+	mux.HandleFunc("POST /services/{domain}/{service}", func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("Error reading body: %v", err)
+		}
+		m := make(map[string]any)
+		if err := json.Unmarshal(body, &m); err != nil {
+			t.Errorf("Error Unmarshal: %v", err)
+		}
+		l := strings.Split(m["entity_id"].(string), ".")
+		name := l[1]
+		data, err := os.ReadFile(fmt.Sprintf("testdata/%s_%s_%s_response.json", name, r.PathValue("domain"), r.PathValue("service")))
+		if err != nil {
+			t.Errorf("Error reading file: %v", err)
+		}
+		w.WriteHeader(http.StatusOK)
+		if _, err := w.Write(data); err != nil {
+			t.Errorf("Error writing data: %v", err)
+		}
+	})
+	mockServer := httptest.NewServer(mux)
 	return mockServer
 }

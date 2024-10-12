@@ -80,6 +80,7 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 }
 
 func RunCmd() {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
 	output.FormatLevel = func(i interface{}) string {
 		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))

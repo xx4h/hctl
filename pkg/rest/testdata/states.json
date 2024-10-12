@@ -1,0 +1,287 @@
+[
+  {
+    "entity_id": "media_player.player1",
+    "state": "on",
+    "attributes": {
+      "source_list": [
+        "TV",
+        "Bluray",
+        "Game",
+        "Aux1",
+        "Video 1",
+        "Video 2",
+        "Video 3",
+        "Video 4",
+        "Video 5",
+        "Video 6",
+        "Video 7",
+        "Radio"
+      ],
+      "volume_level": 0.975,
+      "is_volume_muted": false,
+      "source": "TV",
+      "video_out": "both,sub",
+      "video_information": {
+        "video_input_port": "No Video",
+        "input_resolution": "Unknown",
+        "input_color_depth": "24bit",
+        "output_resolution": "Unknown",
+        "output_color_depth": "24bit"
+      },
+      "audio_information": {
+        "audio_input_port": "UNKNOWN",
+        "input_signal_format": "Dolby Audio - DD",
+        "input_frequency": "48 kHz",
+        "input_channels": "2.0 ch",
+        "listening_mode": "Extended Stereo",
+        "output_channels": "5.1 ch",
+        "output_frequency": "48 kHz",
+        "precision_quartz_lock_system": "Off",
+        "auto_phase_control_delay": "---",
+        "auto_phase_control_phase": "Normal"
+      },
+      "friendly_name": "Player 1",
+      "supported_features": 3980
+    },
+    "last_changed": "2024-10-09T09:20:54.411430+00:00",
+    "last_reported": "2024-10-09T12:59:50.609297+00:00",
+    "last_updated": "2024-10-09T12:59:43.046327+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW01",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "light.livingroom_main",
+    "state": "off",
+    "attributes": {
+      "min_color_temp_kelvin": 1538,
+      "max_color_temp_kelvin": 7142,
+      "min_mireds": 140,
+      "max_mireds": 650,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": null,
+      "brightness": null,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": null,
+      "rgb_color": null,
+      "xy_color": null,
+      "friendly_name": "Living Main",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-07T17:04:38.275311+00:00",
+    "last_reported": "2024-10-08T17:03:23.870342+00:00",
+    "last_updated": "2024-10-07T17:04:38.275311+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW02",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "light.livingroom_corner",
+    "state": "on",
+    "attributes": {
+      "min_color_temp_kelvin": 1538,
+      "max_color_temp_kelvin": 7142,
+      "min_mireds": 140,
+      "max_mireds": 650,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": "xy",
+      "brightness": 251,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": [22.308, 30.588],
+      "rgb_color": [255, 206, 177],
+      "xy_color": [0.41, 0.354],
+      "friendly_name": "Living Corner",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-08T16:51:15.682053+00:00",
+    "last_reported": "2024-10-09T16:32:47.250536+00:00",
+    "last_updated": "2024-10-09T16:06:48.922014+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW03",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "light.livingroom_other",
+    "state": "off",
+    "attributes": {
+      "min_color_temp_kelvin": 1538,
+      "max_color_temp_kelvin": 7142,
+      "min_mireds": 140,
+      "max_mireds": 650,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": null,
+      "brightness": null,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": null,
+      "rgb_color": null,
+      "xy_color": null,
+      "friendly_name": "Living Other",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-07T07:02:37.561161+00:00",
+    "last_reported": "2024-10-08T17:02:45.226389+00:00",
+    "last_updated": "2024-10-07T07:02:37.561161+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW04",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "light.bedroom_main",
+    "state": "on",
+    "attributes": {
+      "min_color_temp_kelvin": 1901,
+      "max_color_temp_kelvin": 6535,
+      "min_mireds": 153,
+      "max_mireds": 526,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": "xy",
+      "brightness": 207,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": [350.824, 100],
+      "rgb_color": [255, 0, 39],
+      "xy_color": [0.6889, 0.2939],
+      "friendly_name": "Bedroom Main",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-09T09:44:17.732327+00:00",
+    "last_reported": "2024-10-09T10:00:55.765113+00:00",
+    "last_updated": "2024-10-09T09:44:17.732327+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW05",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "light.bedroom_other",
+    "state": "on",
+    "attributes": {
+      "min_color_temp_kelvin": 1538,
+      "max_color_temp_kelvin": 7142,
+      "min_mireds": 140,
+      "max_mireds": 650,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": "xy",
+      "brightness": 1,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": [9.529, 66.667],
+      "rgb_color": [255, 112, 85],
+      "xy_color": [0.59, 0.329],
+      "friendly_name": "Bedroom Other",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-08T17:29:42.848900+00:00",
+    "last_reported": "2024-10-09T09:20:09.641073+00:00",
+    "last_updated": "2024-10-08T19:59:06.537171+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW06",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "switch.livingroom_warp",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Living Warp"
+    },
+    "last_changed": "2024-10-07T19:31:49.073486+00:00",
+    "last_reported": "2024-10-08T16:59:00.086942+00:00",
+    "last_updated": "2024-10-07T19:31:49.073486+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW07",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "switch.bedroom_warp",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Bedroom Warp"
+    },
+    "last_changed": "2024-10-08T19:59:08.442560+00:00",
+    "last_reported": "2024-10-09T09:16:33.245915+00:00",
+    "last_updated": "2024-10-08T19:59:08.442560+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW08",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "media_player.player2",
+    "state": "on",
+    "attributes": {
+      "source_list": [
+        "Apple TV",
+        "DAZN",
+        "Disney+",
+        "HDMI 1",
+        "HDMI 3",
+        "Netflix",
+        "Prime Video",
+        "YouTube"
+      ],
+      "volume_level": 0,
+      "is_volume_muted": false,
+      "source": "HDMI 1",
+      "sound_output": "external_arc",
+      "assumed_state": true,
+      "device_class": "tv",
+      "entity_picture": "/api/media_player_proxy/media_player.lgc9?token=hash123456&cache=0123abc",
+      "friendly_name": "Player 2",
+      "supported_features": 24377
+    },
+    "last_changed": "2024-10-09T12:44:36.607907+00:00",
+    "last_reported": "2024-10-09T13:00:42.661562+00:00",
+    "last_updated": "2024-10-09T12:59:42.477207+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW09",
+      "parent_id": null,
+      "user_id": null
+    }
+  },
+  {
+    "entity_id": "automation.some_automation",
+    "state": "on",
+    "attributes": {
+      "id": "1234567890123",
+      "last_triggered": "2024-10-01T15:41:36.363764+00:00",
+      "mode": "single",
+      "current": 0,
+      "friendly_name": "Some automation"
+    },
+    "last_changed": "2024-10-05T09:45:26.845585+00:00",
+    "last_reported": "2024-10-05T09:45:26.845585+00:00",
+    "last_updated": "2024-10-05T09:45:26.845585+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW10",
+      "parent_id": null,
+      "user_id": null
+    }
+  }
+]

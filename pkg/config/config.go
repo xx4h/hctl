@@ -78,6 +78,7 @@ func NewConfig() (*Config, error) {
 
 	v.SetEnvPrefix("HCTL")
 	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.SetConfigType("yaml")
 	v.SetConfigName("hctl")
 	v.AddConfigPath(".")

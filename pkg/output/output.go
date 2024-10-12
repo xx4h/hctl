@@ -17,6 +17,7 @@ package output
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/gosuri/uitable"
 	"github.com/pterm/pterm"
@@ -57,7 +58,17 @@ func PrintThreeLevelFlatTree(name string, tree map[string][]string) error {
 		Children: []pterm.TreeNode{},
 	}
 
+	var secondLevel []string
+
 	for key := range tree {
+		secondLevel = append(secondLevel, key)
+	}
+
+	sort.Strings(secondLevel)
+
+	for _, key := range secondLevel {
+		sort.Strings(tree[key])
+
 		p := []pterm.TreeNode{}
 		for lid := range tree[key] {
 			p = append(p, pterm.TreeNode{Text: tree[key][lid]})

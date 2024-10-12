@@ -1,8 +1,8 @@
 # hctl
 
 <p align="center">
-  <img alt="GitHub forks" src="https://img.shields.io/github/forks/xx4h/hctl">
   <img alt="GitHub stars" src="https://img.shields.io/github/stars/xx4h/hctl">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/xx4h/hctl">
 </p>
 
 <!-- markdownlint-disable no-empty-links -->

@@ -34,33 +34,53 @@ import (
 )
 
 func InitializeConfig(c *config.Config, configPath string) error {
-	_, err := os.Stat(configPath)
-	if err == nil {
-		return fmt.Errorf("config already initialized, please use `hctl config` or edit %s directly", configPath)
-	} else if errors.Is(err, fs.ErrNotExist) {
-		hub := new(config.Hub)
-		hub.Type = getHubType()
-		hub.URL = getURL()
-		hub.Token = getToken()
-
-		if err := testAPI(hub.URL, hub.Token); err != nil {
-			log.Error().Msgf("API test failed: %v", err)
-			return InitializeConfig(c, configPath)
-		}
-
-		c.Viper.Set("hub", &hub)
-		configDir := filepath.Dir(configPath)
-		if err := os.MkdirAll(configDir, 0700); err != nil {
-			log.Error().Msgf("Couldn't create config dir: %v\n", err)
-		}
-
-		fmt.Printf("\n\n")
-		if err := c.Viper.WriteConfigAs(configPath); err != nil {
-			log.Error().Msgf("Couldn't write config: %v\n", err)
-		}
-		return nil
+	configExists, err := configExists(configPath)
+	if err != nil {
+		return err
 	}
-	return fmt.Errorf("Unknown Error, this should not happen: %v", err)
+
+	if configExists {
+		return fmt.Errorf("config already initialized, please use `hctl config` or edit %s directly", configPath)
+	}
+
+	hub := getMinimalConfig()
+
+	if err := testAPI(hub.URL, hub.Token); err != nil {
+		log.Error().Msgf("API test failed: %v", err)
+		return InitializeConfig(c, configPath)
+	}
+
+	c.Viper.Set("hub", &hub)
+	configDir := filepath.Dir(configPath)
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		log.Error().Msgf("Couldn't create config dir: %v\n", err)
+	}
+
+	fmt.Printf("\n\n")
+	if err := c.Viper.WriteConfigAs(configPath); err != nil {
+		log.Error().Msgf("Couldn't write config: %v\n", err)
+	}
+	return nil
+}
+
+func getMinimalConfig() *config.Hub {
+	hub := new(config.Hub)
+	hub.Type = getHubType()
+	hub.URL = getURL()
+	hub.Token = getToken()
+
+	return hub
+}
+
+func configExists(config string) (bool, error) {
+	_, err := os.Stat(config)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, fs.ErrNotExist) {
+		return false, nil
+	}
+	return false, err
 }
 
 func getHubType() string {
@@ -103,25 +123,24 @@ func getURL() string {
 	return url
 }
 
-func isJwtToken(token []byte) bool {
+func isJwtToken(token []byte) (bool, error) {
 	t := string(token)
 	_, _, err := new(jwt.Parser).ParseUnverified(t, jwt.MapClaims{})
-	return err == nil
+	return err == nil, err
 }
 
 func getToken() string {
-	var token string
 	fmt.Print("Enter your hub token: ")
 	byteToken, err := term.ReadPassword(int(syscall.Stdin)) //nolint:unconvert
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return getToken()
 	}
-	if ok := isJwtToken(byteToken); !ok {
+	if ok, err := isJwtToken(byteToken); !ok {
 		fmt.Printf("\nNot a valid Token (JWT): %v\n", err)
 		return getToken()
 	}
-	return token
+	return string(byteToken)
 }
 
 func testAPI(url string, token string) error {

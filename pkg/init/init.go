@@ -80,6 +80,14 @@ func getHubType() string {
 	return hubType
 }
 
+func isURL(url string) bool {
+	up, err := u.Parse(url)
+	if err != nil || up.Scheme == "" || up.Host == "" {
+		return false
+	}
+	return true
+}
+
 func getURL() string {
 	var url string
 	fmt.Print("Enter API URL of your hub (e.g. https://home-assistant.example.com/api): ")
@@ -88,12 +96,17 @@ func getURL() string {
 		fmt.Printf("Error: %v\n", err)
 		return getURL()
 	}
-	up, err := u.Parse(url)
-	if err != nil || up.Scheme == "" || up.Host == "" {
+	if ok := isURL(url); !ok {
 		fmt.Printf("Not a valid URL: %s\n", url)
 		return getURL()
 	}
 	return url
+}
+
+func isJwtToken(token []byte) bool {
+	t := string(token)
+	_, _, err := new(jwt.Parser).ParseUnverified(t, jwt.MapClaims{})
+	return err == nil
 }
 
 func getToken() string {
@@ -104,9 +117,7 @@ func getToken() string {
 		fmt.Printf("Error: %v\n", err)
 		return getToken()
 	}
-	token = string(byteToken)
-	_, _, err = new(jwt.Parser).ParseUnverified(token, jwt.MapClaims{})
-	if err != nil {
+	if ok := isJwtToken(byteToken); !ok {
 		fmt.Printf("\nNot a valid Token (JWT): %v\n", err)
 		return getToken()
 	}

@@ -4,7 +4,6 @@ go 1.22.7
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f
 	github.com/gosuri/uitable v0.0.4
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pterm/pterm v0.12.79

@@ -15,32 +15,27 @@
 package rest
 
 import (
-	"reflect"
 	"testing"
 )
 
-const (
-	serviceCount = 47
-)
-
-func Test_GetServices(t *testing.T) {
+func Test_Toggle(t *testing.T) {
 	ms := mockServer(t)
 	h := &Hass{
 		APIURL: ms.URL,
 		Token:  "test_token",
 	}
 	defer ms.Close()
-	s, err := h.GetServices()
+	obj, action, sub, err := h.Toggle("bedroom_main")
 	if err != nil {
-		t.Errorf("Error getting services: %v", err)
+		t.Errorf("Error toggling: %v", err)
 	}
-	st := reflect.TypeOf(s)
-	wt := reflect.TypeOf([]HassService{})
-	if st != wt {
-		t.Errorf("got %s, want %s", st, wt)
+	if obj != "bedroom_main" {
+		t.Errorf("got %s, want bedroom_main", obj)
 	}
-	cs := len(s)
-	if cs != serviceCount {
-		t.Errorf("got %d, want %d", cs, serviceCount)
+	if action != "toggle" {
+		t.Errorf("got %s, want toggle", action)
+	}
+	if sub != "light" {
+		t.Errorf("got %s, want light", sub)
 	}
 }

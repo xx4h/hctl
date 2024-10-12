@@ -24,7 +24,7 @@ const (
 )
 
 func Test_GetStates(t *testing.T) {
-	ms := mockServerGetDataFromFile(t, "states.json")
+	ms := mockServer(t)
 	h := &Hass{
 		APIURL: ms.URL,
 		Token:  "test_token",

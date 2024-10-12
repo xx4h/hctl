@@ -61,32 +61,35 @@ func (h *Hass) preflight() error {
 	return nil
 }
 
+func (h *Hass) createRequest(meth string, path string, payload map[string]any) (*http.Request, error) {
+	var r io.Reader
+
+	if payload != nil {
+		b, err := json.Marshal(payload)
+		if err != nil {
+			return nil, err
+		}
+		r = bytes.NewBuffer(b)
+	}
+
+	return http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), r)
+}
+
 func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, error) {
 	if err := h.preflight(); err != nil {
 		return nil, err
 	}
-	client := &http.Client{}
-	var req *http.Request
-	var err error
-	if payload != nil {
-		jayload, err := json.Marshal(payload)
-		if err != nil {
-			return nil, err
-		}
-		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), bytes.NewBuffer(jayload))
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		req, err = http.NewRequest(meth, fmt.Sprintf("%s%s", h.APIURL, path), nil)
-		if err != nil {
-			return nil, err
-		}
+
+	req, err := h.createRequest(meth, path, payload)
+	if err != nil {
+		return nil, err
 	}
+
 	log.Info().Msgf("Requesting URL %s, Method %s, Payload: %#v", req.URL, req.Method, payload)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", h.Token))
 	req.Header.Set("Content-Type", "application/json")
 
+	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err

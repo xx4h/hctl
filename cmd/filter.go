@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/xx4h/hctl/pkg/rest"
@@ -43,7 +44,7 @@ func filterStates(states []rest.HassState, ignoredStates []string) []rest.HassSt
 }
 
 // Filter states with given service capability and state
-func filterCapable(states []rest.HassState, services []rest.HassService, service string, state string) []rest.HassState {
+func filterCapable(states []rest.HassState, services []rest.HassService, serviceCaps []string, state string) []rest.HassState {
 	// get all service domains that have "turn_on" as domain service
 	// split state.EntryId domain=[0] entity=[1]
 	// create list of states that are in a domain having "turn_on" as domain service
@@ -52,7 +53,7 @@ func filterCapable(states []rest.HassState, services []rest.HassService, service
 	var filteredStates []rest.HassState
 	for _, rel := range services {
 		for name := range rel.Services {
-			if name == service {
+			if slices.Contains(serviceCaps, name) {
 				capableServices = append(capableServices, rel)
 			}
 		}

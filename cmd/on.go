@@ -32,7 +32,7 @@ func newOnCmd(h *pkg.Hctl) *cobra.Command {
 			if len(args) != 0 {
 				return noMoreArgsComp()
 			}
-			return compListStates(toComplete, args, "turn_on", "off", h)
+			return compListStates(toComplete, args, []string{"turn_on"}, "off", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()

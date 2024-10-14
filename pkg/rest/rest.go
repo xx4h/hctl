@@ -177,11 +177,14 @@ func (h *Hass) findEntity(name string, domain string, service string) (string, s
 }
 
 func (h *Hass) entityArgHandler(args []string, service string) (string, string, error) {
+	domain, name := splitDomainAndName(args[0])
 	if len(args) == 1 {
-		domain, name := splitDomainAndName(args[0])
 		return h.findEntity(name, domain, service)
 	} else if len(args) == 2 {
-		return args[0], args[1], nil
+		if domain == "" {
+			return args[0], args[1], nil // #nosec G602
+		}
+		return h.findEntity(name, domain, service)
 	}
 	return "", "", fmt.Errorf("entityArgHandler has to many entries in args: %d", len(args))
 }

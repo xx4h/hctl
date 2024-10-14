@@ -62,6 +62,7 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 	}
 
 	cmd.AddCommand(
+		newBrightnessCmd(h),
 		newCompletionCmd(),
 		newConfigCmd(h, out),
 		newInitCmd(h),

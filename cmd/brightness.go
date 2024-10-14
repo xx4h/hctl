@@ -15,41 +15,45 @@
 package cmd
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
 	"github.com/xx4h/hctl/pkg"
 	o "github.com/xx4h/hctl/pkg/output"
+	"github.com/xx4h/hctl/pkg/util"
 )
 
-func newOnCmd(h *pkg.Hctl) *cobra.Command {
-	var brightness string
+var (
+	brightnessRange = util.MakeRangeString(1, 99)
+)
 
+func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "on [-b|--brightness min|max|1-99]",
-		Short: "Switch or turn on a light or switch",
-		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+		Use:     "brightness [min|max|1-99]",
+		Short:   "Change brightness",
+		Aliases: []string{"b", "br", "bright"},
+		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			if len(args) != 0 {
-				return noMoreArgsComp()
+			if len(args) == 0 {
+				return compListStates(toComplete, args, []string{"turn_on", "turn_off"}, []string{"brightness"}, "", h)
+			} else if len(args) == 1 {
+				brightnessRange = append([]string{"min", "max"}, brightnessRange...)
+				return brightnessRange, cobra.ShellCompDirectiveNoFileComp
 			}
-			return compListStates(toComplete, args, []string{"turn_on"}, nil, "off", h)
+			return nil, cobra.ShellCompDirectiveDefault
 		},
-		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
-			if err := validateBrightness(brightness); err != nil {
+		PersistentPreRunE: func(_ *cobra.Command, args []string) error {
+			if err := validateBrightness(args[1]); err != nil {
 				return err
 			}
 			return nil
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			var obj, state, sub string
-			var err error
-			if brightness != "" {
-				obj, state, sub, err = c.TurnLightOnBrightness(args[0], brightness)
-			} else {
-				obj, state, sub, err = c.TurnOn(args[0])
-			}
+			obj, state, sub, err := c.TurnLightOnBrightness(args[0], args[1])
 			if err != nil {
 				o.PrintError(err)
 			} else {
@@ -59,14 +63,12 @@ func newOnCmd(h *pkg.Hctl) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&brightness, "brightness", "b", "", "Set brightness")
-	err := cmd.RegisterFlagCompletionFunc("brightness", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		brightnessRange = append([]string{"min", "max"}, brightnessRange...)
-		return brightnessRange, cobra.ShellCompDirectiveNoFileComp
-	})
-	if err != nil {
-		log.Error().Msgf("Could not register flag completion func for brightness: %+v", err)
-	}
-
 	return cmd
+}
+
+func validateBrightness(brightness string) error {
+	if !slices.Contains(brightnessRange, brightness) && brightness != "min" && brightness != "max" {
+		return fmt.Errorf("brightness needs to be 1-99, or min/max")
+	}
+	return nil
 }

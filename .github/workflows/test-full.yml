@@ -1,0 +1,29 @@
+---
+name: Test Code Base
+
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+
+permissions: {}
+
+jobs:
+  build:
+    name: Test Code Base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed
+          # files within `super-linter`
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+
+      - name: Go Build
+        run: CGO_ENABLED=0 go build -v -trimpath -ldflags '-w -s' ./main.go
+
+      - name: Go test
+        uses: robherley/go-test-action@v0

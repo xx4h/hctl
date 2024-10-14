@@ -8,6 +8,7 @@
 <!-- markdownlint-disable no-empty-links -->
 
 [![Lint Code Base](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/linter-full.yml)
+[![Test Code Base](https://github.com/xx4h/hctl/actions/workflows/test-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/test-full.yml)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/xx4h/hctl/total)](https://github.com/xx4h/hctl/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xx4h/hctl?)](https://goreportcard.com/report/github.com/xx4h/hctl)
 [![codebeat badge](https://codebeat.co/badges/21ee1b92-b94c-4425-a600-b01dd4b1c045)](https://codebeat.co/projects/github-com-xx4h-hctl-main)
@@ -86,9 +87,9 @@ Copy the example config from this project
 ```yaml
 # Configure Hub
 hub:
-  type: hass
-  url: https://home-assistant.example.com/api
-  token: YourToken
+    type: hass
+    url: https://home-assistant.example.com/api
+    token: YourToken
 ```
 
 ensure the folder does already exist and edit with your favorite editor
@@ -161,7 +162,7 @@ Completion Short Names can be disabled with:
 
 ```yaml
 completion:
-  short_names: false
+    short_names: false
 ```
 
 ### Fuzzy Matching
@@ -182,7 +183,7 @@ Fuzzy Matching can be turned off in the config with:
 
 ```yaml
 handling:
-  fuzz: false
+    fuzz: false
 ```
 
 ## What's Next / Roadmap

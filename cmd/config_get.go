@@ -25,6 +25,7 @@ import (
 )
 
 const (
+	// editorconfig-checker-disable
 	configGetExample = `
   # Get all config options
   hctl config get
@@ -32,6 +33,7 @@ const (
   # Get a specific config option
   hctl config get hub.url
   `
+	// editorconfig-checker-enable
 )
 
 func newConfigGetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {

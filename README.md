@@ -87,9 +87,9 @@ Copy the example config from this project
 ```yaml
 # Configure Hub
 hub:
-    type: hass
-    url: https://home-assistant.example.com/api
-    token: YourToken
+  type: hass
+  url: https://home-assistant.example.com/api
+  token: YourToken
 ```
 
 ensure the folder does already exist and edit with your favorite editor
@@ -162,7 +162,7 @@ Completion Short Names can be disabled with:
 
 ```yaml
 completion:
-    short_names: false
+  short_names: false
 ```
 
 ### Fuzzy Matching
@@ -183,7 +183,7 @@ Fuzzy Matching can be turned off in the config with:
 
 ```yaml
 handling:
-    fuzz: false
+  fuzz: false
 ```
 
 ## What's Next / Roadmap

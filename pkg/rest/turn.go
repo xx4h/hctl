@@ -56,9 +56,12 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 
 func (h *Hass) TurnLightOnBrightness(device, brightness string) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
-	if brightness == "min" {
+	switch brightness {
+	case "min":
 		brightness = "1"
-	} else if brightness == "max" {
+	case "mid":
+		brightness = "50"
+	case "max":
 		brightness = "99"
 	}
 	if err != nil {

@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	brightnessRange = util.MakeRangeString(1, 99)
+	brightnessRange = append([]string{"min", "mid", "max"}, util.MakeRangeString(1, 99)...)
 )
 
 func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
@@ -40,8 +40,7 @@ func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 			if len(args) == 0 {
 				return compListStates(toComplete, args, []string{"turn_on", "turn_off"}, []string{"brightness"}, "", h)
 			} else if len(args) == 1 {
-				brightnessRange = append([]string{"min", "max"}, brightnessRange...)
-				return brightnessRange, cobra.ShellCompDirectiveNoFileComp
+				return brightnessRange, cobra.ShellCompDirectiveKeepOrder | cobra.ShellCompDirectiveNoFileComp
 			}
 			return nil, cobra.ShellCompDirectiveDefault
 		},

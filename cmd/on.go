@@ -61,8 +61,7 @@ func newOnCmd(h *pkg.Hctl) *cobra.Command {
 
 	cmd.PersistentFlags().StringVarP(&brightness, "brightness", "b", "", "Set brightness")
 	err := cmd.RegisterFlagCompletionFunc("brightness", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		brightnessRange = append([]string{"min", "max"}, brightnessRange...)
-		return brightnessRange, cobra.ShellCompDirectiveNoFileComp
+		return brightnessRange, cobra.ShellCompDirectiveKeepOrder | cobra.ShellCompDirectiveNoFileComp
 	})
 	if err != nil {
 		log.Error().Msgf("Could not register flag completion func for brightness: %+v", err)

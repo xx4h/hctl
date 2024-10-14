@@ -24,10 +24,12 @@ import (
 )
 
 const (
+	// editorconfig-checker-disable
 	configSetExample = `
   # Set config option
   hctl config set logging.log_level debug
   `
+	// editorconfig-checker-enable
 )
 
 func newConfigSetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {

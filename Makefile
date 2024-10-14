@@ -23,9 +23,9 @@ TAGS					:=
 TESTS					:= .
 TESTFLAGS			:=
 LDFLAGS				:= -w -s\
-								 -X github.com/xx4h/hctl/cmd.version=$(shell git rev-parse --abbrev-ref HEAD)-$(GIT_DIRTY)\
-								 -X github.com/xx4h/hctl/cmd.commit=$(GIT_COMMIT)\
-								 -X github.com/xx4h/hctl/cmd.date=$(shell date -Iseconds)
+								-X github.com/xx4h/hctl/cmd.version=$(shell git rev-parse --abbrev-ref HEAD)-$(GIT_DIRTY)\
+								-X github.com/xx4h/hctl/cmd.commit=$(GIT_COMMIT)\
+								-X github.com/xx4h/hctl/cmd.date=$(shell date -Iseconds)
 GOFLAGS				:=
 CGO_ENABLED		?= 0
 
@@ -112,7 +112,7 @@ clean:
 
 .PHONY: info
 info:
-	 @echo "Version:           ${VERSION}"
-	 @echo "Git Tag:           ${GIT_TAG}"
-	 @echo "Git Commit:        ${GIT_COMMIT}"
-	 @echo "Git Tree State:    ${GIT_DIRTY}"
+	@echo "Version:           ${VERSION}"
+	@echo "Git Tag:           ${GIT_TAG}"
+	@echo "Git Commit:        ${GIT_COMMIT}"
+	@echo "Git Tree State:    ${GIT_DIRTY}"

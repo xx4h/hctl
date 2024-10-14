@@ -31,6 +31,7 @@ func newCompletionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "completion [bash|zsh|fish|powershell]",
 		Short: "Generate completion script",
+		// editorconfig-checker-disable
 		Long: fmt.Sprintf(`To load completions:
 
   Bash:
@@ -70,6 +71,7 @@ func newCompletionCmd() *cobra.Command {
     PS> %[1]s completion powershell > %[1]s.ps1
     # and source this file from your PowerShell profile.
   `, appName),
+		// editorconfig-checker-enable
 		DisableFlagsInUseLine: true,
 		ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
 		Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),

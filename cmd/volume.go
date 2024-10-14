@@ -36,7 +36,7 @@ func newVolumeCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) == 0 {
-				return compListStates(toComplete, args, []string{"volume_set"}, "", h)
+				return compListStates(toComplete, args, []string{"volume_set"}, nil, "", h)
 			} else if len(args) == 1 {
 				return volRange, cobra.ShellCompDirectiveNoFileComp
 			}

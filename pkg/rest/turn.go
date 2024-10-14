@@ -14,15 +14,19 @@
 
 package rest
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func (h *Hass) turn(state string, sub string, obj string) error {
+func (h *Hass) turn(state, domain, device, brightness string) error {
 	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
 	// 	return err
 	// }
-
-	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", sub, obj)}
-	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", sub, state), payload)
+	payload := map[string]any{"entity_id": fmt.Sprintf("%s.%s", domain, device)}
+	if brightness != "" {
+		payload["brightness"] = brightness
+	}
+	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", domain, state), payload)
 	if err != nil {
 		return err
 	}
@@ -39,7 +43,7 @@ func (h *Hass) TurnOff(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "off", sub, h.turn("off", sub, obj)
+	return obj, "off", sub, h.turn("off", sub, obj, "")
 }
 
 func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
@@ -47,7 +51,20 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "on", sub, h.turn("on", sub, obj)
+	return obj, "on", sub, h.turn("on", sub, obj, "")
+}
+
+func (h *Hass) TurnLightOnBrightness(device, brightness string) (string, string, string, error) {
+	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
+	if brightness == "min" {
+		brightness = "1"
+	} else if brightness == "max" {
+		brightness = "99"
+	}
+	if err != nil {
+		return "", "", "", err
+	}
+	return device, "on", domain, h.turn("on", domain, device, brightness)
 }
 
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {

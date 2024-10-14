@@ -27,12 +27,12 @@ import (
 )
 
 var (
-	brightnessRange = append([]string{"min", "mid", "max"}, util.MakeRangeString(1, 99)...)
+	brightnessRange = append([]string{"+", "-", "min", "mid", "max"}, util.MakeRangeString(1, 99)...)
 )
 
 func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "brightness [min|max|1-99]",
+		Use:     "brightness [+|-|min|max|1-99]",
 		Short:   "Change brightness",
 		Aliases: []string{"b", "br", "bright"},
 		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
@@ -44,8 +44,11 @@ func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 			}
 			return nil, cobra.ShellCompDirectiveDefault
 		},
-		PersistentPreRunE: func(_ *cobra.Command, args []string) error {
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if err := validateBrightness(args[1]); err != nil {
+				return err
+			}
+			if err := cmd.Root().PersistentPreRunE(cmd, args); err != nil {
 				return err
 			}
 			return nil
@@ -66,8 +69,8 @@ func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 }
 
 func validateBrightness(brightness string) error {
-	if !slices.Contains(brightnessRange, brightness) && brightness != "min" && brightness != "max" {
-		return fmt.Errorf("brightness needs to be 1-99, or min/max")
+	if !slices.Contains(brightnessRange, brightness) {
+		return fmt.Errorf("brightness needs to be 1-99, or +/-/min/max")
 	}
 	return nil
 }

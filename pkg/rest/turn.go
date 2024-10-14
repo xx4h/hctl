@@ -16,6 +16,7 @@ package rest
 
 import (
 	"fmt"
+	"strconv"
 )
 
 func (h *Hass) turn(state, domain, device, brightness string) error {
@@ -54,9 +55,51 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 	return obj, "on", sub, h.turn("on", sub, obj, "")
 }
 
+func (h *Hass) brightStep(domain, device, updown string) (string, error) {
+	state, err := h.GetState(domain, device)
+	if err != nil {
+		return "", err
+	}
+
+	curany, ok := state.Attributes["brightness"]
+	if !ok {
+		return "", fmt.Errorf("state `%s.%s` has no attribute `brightness`", domain, device)
+	}
+
+	i, err := strconv.Atoi(fmt.Sprintf("%.0f", curany))
+	if err != nil {
+		return "", err
+	}
+
+	diff := i % 10
+	switch updown {
+	case "+":
+		b := i + (10 - diff)
+		if b == 100 {
+			b = 99
+		}
+		return fmt.Sprintf("%d", b), nil
+	case "-":
+		b := i - diff
+		if diff == 0 {
+			b = i - 10
+		}
+		if b == 0 {
+			b = 1
+		}
+		return fmt.Sprintf("%d", b), nil
+	default:
+		return "", fmt.Errorf("no such brightStep: %s", updown)
+	}
+}
+
 func (h *Hass) TurnLightOnBrightness(device, brightness string) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
 	switch brightness {
+	case "-":
+		brightness, err = h.brightStep(domain, device, "-")
+	case "+":
+		brightness, err = h.brightStep(domain, device, "+")
 	case "min":
 		brightness = "1"
 	case "mid":

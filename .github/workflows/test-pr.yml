@@ -1,10 +1,7 @@
 ---
-name: Tests
+name: Test Pull Request
 
 on:
-  workflow_dispatch:
-  push:
-    branches: main
   pull_request:
     branches: main
 
@@ -12,7 +9,7 @@ permissions: {}
 
 jobs:
   build:
-    name: Tests
+    name: Test Pull Request
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

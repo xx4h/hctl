@@ -44,7 +44,7 @@ func newConfigSetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			return compListConfig(toComplete, args, h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
-			if err := h.SetConfigValue(args[0], args[1]); err != nil {
+			if err := h.SetConfigValueWrite(args[0], args[1]); err != nil {
 				o.PrintError(err)
 			}
 			o.PrintSuccess(args[0])

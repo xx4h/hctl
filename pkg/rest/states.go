@@ -16,6 +16,7 @@ package rest
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -52,6 +53,21 @@ func (h *Hass) GetStates() ([]HassState, error) {
 	h.States = states
 
 	return states, nil
+}
+
+func (h *Hass) GetState(domain, name string) (HassState, error) {
+	states, err := h.GetStates()
+	if err != nil {
+		return HassState{}, err
+	}
+
+	for i := range states {
+		d, n := splitDomainAndName(states[i].EntityID)
+		if domain == d && name == n {
+			return states[i], nil
+		}
+	}
+	return HassState{}, fmt.Errorf("no such state %s.%s", domain, name)
 }
 
 func (h *Hass) GetFilteredStates(domains []string) ([]HassState, error) {

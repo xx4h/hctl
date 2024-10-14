@@ -26,7 +26,7 @@ func newOnCmd(h *pkg.Hctl) *cobra.Command {
 	var brightness string
 
 	cmd := &cobra.Command{
-		Use:   "on [-b|--brightness min|max|1-99]",
+		Use:   "on [-b|--brightness +|-|min|max|1-99]",
 		Short: "Switch or turn on a light or switch",
 		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -35,8 +35,14 @@ func newOnCmd(h *pkg.Hctl) *cobra.Command {
 			}
 			return compListStates(toComplete, args, []string{"turn_on"}, nil, "off", h)
 		},
-		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if brightness == "" {
+				return nil
+			}
 			if err := validateBrightness(brightness); err != nil {
+				return err
+			}
+			if err := cmd.Root().PersistentPreRunE(cmd, args); err != nil {
 				return err
 			}
 			return nil

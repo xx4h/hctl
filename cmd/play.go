@@ -33,7 +33,7 @@ func newPlayCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			if len(args) != 0 {
 				return nil, cobra.ShellCompDirectiveDefault
 			}
-			return compListStates(toComplete, args, []string{"play_media"}, "", h)
+			return compListStates(toComplete, args, []string{"play_media"}, nil, "", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			h.PlayMusic(args[0], args[1])

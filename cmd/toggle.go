@@ -35,7 +35,7 @@ func newToggleCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			if len(args) != 0 {
 				return noMoreArgsComp()
 			}
-			return compListStates(toComplete, args, []string{"toggle"}, "", h)
+			return compListStates(toComplete, args, []string{"toggle"}, nil, "", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()

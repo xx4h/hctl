@@ -43,14 +43,37 @@ func filterStates(states []rest.HassState, ignoredStates []string) []rest.HassSt
 	return filteredStates
 }
 
+func filterAttributes(states []rest.HassState, attributes []string) []rest.HassState {
+	if attributes == nil {
+		return states
+	}
+
+	var filteredStates []rest.HassState
+
+	for rel := range states {
+		for _, attr := range attributes {
+			if _, ok := states[rel].Attributes[attr]; ok {
+				filteredStates = append(filteredStates, states[rel])
+				// no need to further iterate attributes
+				break
+			}
+		}
+	}
+
+	return filteredStates
+}
+
 // Filter states with given service capability and state
 func filterCapable(states []rest.HassState, services []rest.HassService, serviceCaps []string, state string) []rest.HassState {
+	if serviceCaps == nil {
+		return states
+	}
+
 	// get all service domains that have "turn_on" as domain service
 	// split state.EntryId domain=[0] entity=[1]
 	// create list of states that are in a domain having "turn_on" as domain service
 	// return only states from the list where state.State == off
 	var capableServices []rest.HassService
-	var filteredStates []rest.HassState
 	for _, rel := range services {
 		for name := range rel.Services {
 			if slices.Contains(serviceCaps, name) {
@@ -59,13 +82,17 @@ func filterCapable(states []rest.HassState, services []rest.HassService, service
 		}
 	}
 
+	// in case we have multiple capableServices, trackList will ensure that we don't add states twice due tue their multiple capabilities
+	var trackList []string
+	var filteredStates []rest.HassState
 	for rel := range states {
 		s := strings.Split(states[rel].EntityID, ".")
 		stateDomain := s[0]
 		for svc := range capableServices {
 			if stateDomain == capableServices[svc].Domain {
-				if state == "" || states[rel].State == state {
+				if (state == "" || states[rel].State == state) && !slices.Contains(trackList, states[rel].EntityID) {
 					filteredStates = append(filteredStates, states[rel])
+					trackList = append(trackList, states[rel].EntityID)
 				}
 			}
 		}

@@ -34,6 +34,7 @@ And here we are!
 
 - Support for Home Assistant
 - Turn on/off, or toggle all capable devices
+- Set brightness on all capable devices
 - Play local and remote music files
 - Set volume on media players
 - List all Domains & Domain-Services

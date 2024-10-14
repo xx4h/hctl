@@ -108,6 +108,7 @@ func (h *Hass) getResult(res []byte) error {
 	var result []HassResult
 
 	if err := json.Unmarshal(res, &result); err != nil {
+		log.Debug().Caller().Msgf("Failed to Unmarshal: %+v", string(res))
 		return err
 	}
 

@@ -65,7 +65,7 @@ jobs:
                   ],
                 "label_extractor": [
                     {
-                        "pattern": "^.?(build|chore|ci|cleanup|docs|feat|fix|perf|refactor|revert|style|test|tests).?.*",
+                        "pattern": "^.?(build|chore|ci|cleanup|docs|feat|fix|misc|perf|refactor|revert|style|test|tests).?.*",
                         "target": "$1",
                         "method": "regexr",
                         "on_property": "title"

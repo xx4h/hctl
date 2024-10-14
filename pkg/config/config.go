@@ -227,6 +227,38 @@ func (c *Config) GetValueByPath(p string) (string, error) {
 	}
 }
 
+// Same as SetValueByPath, but also writes to config file
+func (c *Config) SetValueByPathWrite(p string, val any) error {
+	if err := c.SetValueByPath(p, val); err != nil {
+		return err
+	}
+	if err := c.WriteConfig(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Config) WriteConfig() error {
+	// convert current config to byte slice
+	b, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+	// create new io.Reader from byte slice config
+	reader := bytes.NewReader(b)
+
+	// read in the byte slice config to viper instance
+	if err := c.Viper.ReadConfig(reader); err != nil {
+		return err
+	}
+
+	// finally write updated viper instance to file
+	if err := c.Viper.WriteConfig(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Config) SetValueByPath(p string, val any) error {
 	// set config element by path p and value v
 	log.Info().Msgf("Setting `%v` to `%v`", p, val)
@@ -267,26 +299,6 @@ func (c *Config) SetValueByPath(p string, val any) error {
 		v.SetInt(e)
 	default:
 		return fmt.Errorf("unexpected type: %v", v.Type())
-	}
-
-	log.Debug().Caller().Msgf("Config after change: %+v", c)
-
-	// convert current config to byte slice
-	b, err := json.Marshal(c)
-	if err != nil {
-		return err
-	}
-	// create new io.Reader from byte slice config
-	reader := bytes.NewReader(b)
-
-	// read in the byte slice config to viper instance
-	if err := c.Viper.ReadConfig(reader); err != nil {
-		return err
-	}
-
-	// finally write updated viper instance to file
-	if err := c.Viper.WriteConfig(); err != nil {
-		return err
 	}
 	return nil
 }

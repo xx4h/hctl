@@ -74,6 +74,11 @@ func (h *Hctl) SetConfigValue(p string, v string) error {
 	return err
 }
 
+func (h *Hctl) SetConfigValueWrite(p string, v string) error {
+	err := h.cfg.SetValueByPathWrite(p, v)
+	return err
+}
+
 func (h *Hctl) GetConfigOptionsAsPaths() []string {
 	return h.cfg.GetOptionsAsPaths()
 }

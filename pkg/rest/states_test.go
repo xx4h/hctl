@@ -17,6 +17,8 @@ package rest
 import (
 	"reflect"
 	"testing"
+
+	"github.com/xx4h/hctl/pkg/hctltest"
 )
 
 const (
@@ -24,7 +26,7 @@ const (
 )
 
 func Test_GetStates(t *testing.T) {
-	ms := mockServer(t)
+	ms := hctltest.MockServer(t)
 	h := &Hass{
 		APIURL: ms.URL,
 		Token:  "test_token",

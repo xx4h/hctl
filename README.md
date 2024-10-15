@@ -47,7 +47,7 @@ And here we are!
 ### Homebrew
 
 ```bash
-brew tap xx4h/hctl
+brew tap xx4h/hctl https://github.com/xx4h/hctl
 brew install xx4h/hctl/hctl
 ```
 

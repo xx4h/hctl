@@ -30,10 +30,12 @@ func newPlayCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 		Aliases: []string{"p"},
 		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			if len(args) != 0 {
-				return nil, cobra.ShellCompDirectiveDefault
+			if len(args) == 1 {
+				return compMediaMap(toComplete, args, h)
+			} else if len(args) == 0 {
+				return compListStates(toComplete, args, []string{"play_media"}, nil, "", h)
 			}
-			return compListStates(toComplete, args, []string{"play_media"}, nil, "", h)
+			return nil, cobra.ShellCompDirectiveNoFileComp
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			h.PlayMusic(args[0], args[1])

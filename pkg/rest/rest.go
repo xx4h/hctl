@@ -28,12 +28,14 @@ import (
 )
 
 type Hass struct {
-	APIURL   string
-	Token    string
-	Fuzz     bool
-	States   []HassState
-	Services []HassService
-	Result   HassResult
+	APIURL    string
+	Token     string
+	Fuzz      bool
+	States    []HassState
+	Services  []HassService
+	DeviceMap map[string]string
+
+	Result HassResult
 }
 
 type HassResult struct {
@@ -47,8 +49,8 @@ type HassResponseAttributes struct {
 	FriendlyName string `json:"friendly_name"`
 }
 
-func New(apiURL string, token string, fuzz bool) *Hass {
-	return &Hass{APIURL: apiURL, Token: token, Fuzz: fuzz}
+func New(apiURL string, token string, fuzz bool, deviceMap map[string]string) *Hass {
+	return &Hass{APIURL: apiURL, Token: token, Fuzz: fuzz, DeviceMap: deviceMap}
 }
 
 func (h *Hass) preflight() error {
@@ -138,6 +140,15 @@ func getFuzz(name string, names []string) (int, bool) {
 	return position, distance > -1
 }
 
+func (h *Hass) resolveMapping(domain, name string) (string, string) {
+	if val, ok := h.DeviceMap[name]; ok && domain == "" {
+		log.Debug().Caller().Msgf("Found `%s` in device_map: %s", name, val)
+		domain, name = splitDomainAndName(val)
+		h.Fuzz = false
+	}
+	return domain, name
+}
+
 // Find matching entity for provided service
 // Return error if none has been found
 func (h *Hass) findEntity(name string, domain string, service string) (string, string, error) {
@@ -145,6 +156,8 @@ func (h *Hass) findEntity(name string, domain string, service string) (string, s
 	if err != nil {
 		return "", "", err
 	}
+
+	domain, name = h.resolveMapping(domain, name)
 
 	var names []string
 

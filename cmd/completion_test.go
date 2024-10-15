@@ -23,7 +23,7 @@ import (
 
 func Test_compListStates(t *testing.T) {
 	ms := hctltest.MockServer(t)
-	h, err := pkg.NewHctl()
+	h, err := pkg.NewHctl(false)
 	if err != nil {
 		t.Errorf("Error createing new Hctl instance: %+v", err)
 	}

@@ -44,6 +44,13 @@ And here we are!
 
 ## Install
 
+### Homebrew
+
+```bash
+brew tap xx4h/hctl
+brew install xx4h/hctl/hctl
+```
+
 ### asdf
 
 ```bash

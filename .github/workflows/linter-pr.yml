@@ -31,5 +31,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JSCPD: false
           VALIDATE_GO: false
+          VALIDATE_RUBY: false
           FILTER_REGEX_EXCLUDE: .*\.github/linters/\.golangci\.yml
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

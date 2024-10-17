@@ -34,6 +34,7 @@ func newConfigCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd.AddCommand(
 		newConfigGetCmd(h, out),
 		newConfigSetCmd(h, out),
+		newConfigRemCmd(h, out),
 	)
 
 	return cmd

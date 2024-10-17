@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -212,6 +213,13 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 
 		o.PrintSuccessAction(obj, state)
 		log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
+		// TODO: find better way to ensure we don't close the server before file has been served
+		// -> RaceCondition
+		// Problem: We could wait for initial connection (e.g. from media player) and only then
+		// move on to WaitAndClose, but media player is not always (i !guess! it depends on time
+		// between plays and filesize) re-requesting the file when we play one and the same media
+		// twice in a short period of time
+		time.Sleep(100 * time.Millisecond)
 		s.WaitAndClose()
 	}
 }

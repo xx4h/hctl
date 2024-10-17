@@ -87,9 +87,9 @@ func RunCmd() {
 		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
 	}
 	log.Logger = log.Output(output)
-	h, err := pkg.NewHctl()
+	h, err := pkg.NewHctl(true)
 	if err != nil {
-		log.Fatal().Msgf("Error: %v", err)
+		log.Fatal().Caller().Msgf("Error: %v", err)
 	}
 	rootCmd = newRootCmd(h, os.Stdout, os.Args[1:])
 	if err := rootCmd.Execute(); err != nil {

@@ -133,6 +133,10 @@ func compListStates(_ string, ignoredStates []string, serviceCaps []string, attr
 	filteredStates = filterAttributes(filteredStates, attributes)
 
 	var choices []string
+	for k := range h.GetMap("device_map") {
+		choices = append(choices, k)
+	}
+
 	for _, rel := range filteredStates {
 		if h.CompletionShortNamesEnabled() {
 			s := strings.Split(rel.EntityID, ".")
@@ -152,4 +156,12 @@ func compListStates(_ string, ignoredStates []string, serviceCaps []string, attr
 
 func compListConfig(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
 	return h.GetConfigOptionsAsPaths(), cobra.ShellCompDirectiveNoFileComp
+}
+
+func compMediaMap(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
+	var choices []string
+	for k := range h.GetMap("media_map") {
+		choices = append(choices, k)
+	}
+	return choices, cobra.ShellCompDirectiveDefault
 }

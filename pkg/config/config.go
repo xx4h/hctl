@@ -31,11 +31,13 @@ import (
 )
 
 type Config struct {
-	Hub        Hub        `mapstructure:"hub" yaml:"hub" json:"hub"`
-	Completion Completion `mapstructure:"completion" yaml:"completion" json:"completion"`
-	Handling   Handling   `mapstructure:"handling" yaml:"handling" json:"handling"`
-	Logging    Logging    `mapstructure:"logging" yaml:"logging" json:"logging"`
-	Serve      Serve      `mapstructure:"serve" yaml:"serve" json:"serve"`
+	Hub        Hub               `mapstructure:"hub" yaml:"hub" json:"hub"`
+	Completion Completion        `mapstructure:"completion" yaml:"completion" json:"completion"`
+	Handling   Handling          `mapstructure:"handling" yaml:"handling" json:"handling"`
+	Logging    Logging           `mapstructure:"logging" yaml:"logging" json:"logging"`
+	Serve      Serve             `mapstructure:"serve" yaml:"serve" json:"serve"`
+	DeviceMap  map[string]string `mapstructure:"device_map" yaml:"device_map" json:"device_map"`
+	MediaMap   map[string]string `mapstructure:"media_map" yaml:"media_map" json:"media_map"`
 	Viper      *viper.Viper
 }
 
@@ -62,7 +64,7 @@ type Serve struct {
 	Port int    `mapstructure:"port" yaml:"port" json:"port"`
 }
 
-func NewConfig() (*Config, error) {
+func NewViper() (*viper.Viper, error) {
 	userDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Warn().Msgf("Could not get user home directory: %v", err)
@@ -84,7 +86,10 @@ func NewConfig() (*Config, error) {
 	v.AddConfigPath(".")
 	v.AddConfigPath(path.Join(userDir, ".config/hctl"))
 	v.AddConfigPath(execDir)
+	return v, nil
+}
 
+func NewConfig() (*Config, error) {
 	// create empty config and set defaults
 	cfg := &Config{}
 	cfg.Completion.ShortNames = true
@@ -95,24 +100,40 @@ func NewConfig() (*Config, error) {
 	cfg.Hub.Type = "hass"
 	cfg.Hub.URL = ""
 	cfg.Hub.Token = ""
+	cfg.DeviceMap = map[string]string{}
+	cfg.MediaMap = map[string]string{}
+
+	v, err := NewViper()
+	if err != nil {
+		return nil, err
+	}
 
 	// use defaults for viper as well
 	v.SetDefault("completion", &cfg.Completion)
 	v.SetDefault("handling", &cfg.Handling)
 	v.SetDefault("logging", &cfg.Logging)
 	v.SetDefault("serve", &cfg.Serve)
+	v.SetDefault("media_map", &cfg.MediaMap)
+	v.SetDefault("device_map", &cfg.DeviceMap)
 
-	if err := v.ReadInConfig(); err != nil {
+	cfg.Viper = v
+
+	return cfg, nil
+}
+
+func (c *Config) LoadConfig() error {
+
+	if err := c.Viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Debug().Caller().Msgf("Config File not found! Please run `hctl init` or manually create %s", v.ConfigFileUsed())
+			log.Debug().Caller().Msgf("Config File not found! Please run `hctl init` or manually create %s", c.Viper.ConfigFileUsed())
 		}
 	}
 
-	if err := v.Unmarshal(&cfg); err != nil {
-		return nil, err
+	if err := c.Viper.Unmarshal(&c); err != nil {
+		return err
 	}
 
-	logLevel := v.GetString("logging.log_level")
+	logLevel := c.Viper.GetString("logging.log_level")
 	if logLevel != "" {
 		lvl, err := zerolog.ParseLevel(logLevel)
 		if err != nil {
@@ -121,12 +142,10 @@ func NewConfig() (*Config, error) {
 		zerolog.SetGlobalLevel(lvl)
 	}
 
-	log.Info().Msgf("Config file in use: %s", v.ConfigFileUsed())
-	log.Debug().Caller().Msgf("Running with the following config: %+v", cfg)
+	log.Info().Msgf("Config file in use: %s", c.Viper.ConfigFileUsed())
+	log.Debug().Caller().Msgf("Running with the following config: %+v", c)
 
-	cfg.Viper = v
-
-	return cfg, nil
+	return nil
 }
 
 func (c *Config) GetServeIP() string {
@@ -161,13 +180,25 @@ func getElementByYamlPath(p []string, v reflect.Value, t reflect.Type) (*reflect
 		typ := t.Field(i)
 
 		if typ.Tag.Get("yaml") == p[0] {
-			if field.Kind() == reflect.Struct {
+			switch field.Kind() {
+			case reflect.Struct:
 				return getElementByYamlPath(p[1:], field, typ.Type)
-			} else if len(p) == 1 {
+			case reflect.Map:
+				for _, e := range field.MapKeys() {
+					if e.String() != p[1] {
+						continue
+					}
+					val := field.MapIndex(e)
+					ty := val.Type()
+					return &val, &ty, nil
+				}
+			}
+			if len(p) == 1 {
 				return &field, &typ.Type, nil
 			}
 		}
 	}
+
 	return nil, nil, fmt.Errorf("no such config option: %s", strings.Join(p, "."))
 }
 

@@ -36,10 +36,16 @@ type Hctl struct {
 	// log *zerolog.Logger
 }
 
-func NewHctl() (*Hctl, error) {
+func NewHctl(loadCfg bool) (*Hctl, error) {
 	cfg, err := config.NewConfig()
 	if err != nil {
 		return nil, err
+	}
+	if loadCfg {
+		err := cfg.LoadConfig()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Hctl{
@@ -74,6 +80,10 @@ func (h *Hctl) SetConfigValue(p string, v string) error {
 	return err
 }
 
+func (h *Hctl) GetMap(k string) map[string]string {
+	return h.cfg.Viper.GetStringMapString(k)
+}
+
 func (h *Hctl) SetConfigValueWrite(p string, v string) error {
 	err := h.cfg.SetValueByPathWrite(p, v)
 	return err
@@ -84,7 +94,7 @@ func (h *Hctl) GetConfigOptionsAsPaths() []string {
 }
 
 func (h *Hctl) GetRest() *rest.Hass {
-	return rest.New(h.cfg.Hub.URL, h.cfg.Hub.Token, h.cfg.Handling.Fuzz)
+	return rest.New(h.cfg.Hub.URL, h.cfg.Hub.Token, h.cfg.Handling.Fuzz, h.cfg.DeviceMap)
 }
 
 func (h *Hctl) GetServices() ([]rest.HassService, error) {
@@ -148,6 +158,10 @@ func (h *Hctl) DumpStates(domains []string) {
 }
 
 func (h *Hctl) PlayMusic(obj string, mediaURL string) {
+	if mapURL, ok := h.cfg.MediaMap[mediaURL]; ok {
+		mediaURL = mapURL
+	}
+
 	// handle url or file system path
 	if ok := util.IsURL(mediaURL); ok {
 		// if we already have a url, just play it

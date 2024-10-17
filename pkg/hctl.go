@@ -84,6 +84,16 @@ func (h *Hctl) GetMap(k string) map[string]string {
 	return h.cfg.Viper.GetStringMapString(k)
 }
 
+func (h *Hctl) RemoveConfigOption(p string) error {
+	err := h.cfg.RemoveOptionByPath(p)
+	return err
+}
+
+func (h *Hctl) RemoveConfigOptionWrite(p string) error {
+	err := h.cfg.RemoveOptionByPathWrite(p)
+	return err
+}
+
 func (h *Hctl) SetConfigValueWrite(p string, v string) error {
 	err := h.cfg.SetValueByPathWrite(p, v)
 	return err

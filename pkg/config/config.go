@@ -22,6 +22,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -259,6 +260,17 @@ func (c *Config) GetValueByPath(p string) (string, error) {
 }
 
 // Same as SetValueByPath, but also writes to config file
+func (c *Config) RemoveOptionByPathWrite(p string) error {
+	if err := c.RemoveOptionByPath(p); err != nil {
+		return err
+	}
+	if err := c.WriteConfig(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Same as SetValueByPath, but also writes to config file
 func (c *Config) SetValueByPathWrite(p string, val any) error {
 	if err := c.SetValueByPath(p, val); err != nil {
 		return err
@@ -290,10 +302,32 @@ func (c *Config) WriteConfig() error {
 	return nil
 }
 
+func (c *Config) RemoveOptionByPath(p string) error {
+	log.Info().Msgf("Removing option `%s`", p)
+	dynamicStringMap := []string{"device_map", "media_map"}
+	s := strings.Split(p, ".")
+	if len(s) == 2 && slices.Contains(dynamicStringMap, s[0]) {
+		m := c.Viper.GetStringMapString(s[0])
+		delete(m, s[1])
+		c.Viper.Set(s[0], m)
+	}
+	return fmt.Errorf("Deleting `%s` is currently not supported, use set instead", s[1])
+}
+
 func (c *Config) SetValueByPath(p string, val any) error {
+	if err := validateSet(p, val); err != nil {
+		return err
+	}
 	// set config element by path p and value v
 	log.Info().Msgf("Setting `%v` to `%v`", p, val)
+	dynamicStringMap := []string{"device_map", "media_map"}
 	s := strings.Split(p, ".")
+	if len(s) == 2 && slices.Contains(dynamicStringMap, s[0]) {
+		m := c.Viper.GetStringMapString(s[0])
+		m[s[1]] = val.(string)
+		c.Viper.Set(s[0], m)
+		return nil
+	}
 	v, _, err := c.getElement(s)
 	if err != nil {
 		return err

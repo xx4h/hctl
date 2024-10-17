@@ -310,6 +310,7 @@ func (c *Config) RemoveOptionByPath(p string) error {
 		m := c.Viper.GetStringMapString(s[0])
 		delete(m, s[1])
 		c.Viper.Set(s[0], m)
+		return nil
 	}
 	return fmt.Errorf("Deleting `%s` is currently not supported, use set instead", s[1])
 }

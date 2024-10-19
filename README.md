@@ -39,6 +39,7 @@ And here we are!
 - Set volume on media players
 - List all Domains & Domain-Services
 - Completion for `bash`, `zsh`, `fish` and `powershell`, auto completing all capable devices
+- Add shortcuts/mappings for devices and media files
 - Control over short and long names
 - Fuzzy matching your devices so you can keep it short
 
@@ -192,6 +193,28 @@ Fuzzy Matching can be turned off in the config with:
 ```yaml
 handling:
   fuzz: false
+```
+
+### Device Mapping
+
+```bash
+# Set shortcut for `light.livingroom_main` to `lm`
+hctl config set device_map.lm light.livingroom_main
+
+# Use shortcut
+hctl toggle lm
+hctl off lm
+hctl brightness lm 50
+```
+
+### Media Mapping
+
+```bash
+# Set shortcut for `/home/user/sounds/horn.mp3` to `horn`
+hctl config set media_map.horn /home/user/sounds/horn.mp3
+
+# Use shortcut
+hctl play player1 horn
 ```
 
 ## What's Next / Roadmap

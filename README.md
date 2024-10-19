@@ -220,8 +220,8 @@ hctl play player1 horn
 ## What's Next / Roadmap
 
 - [ ] Add more actions (like `press` e.g. Buttons, `trigger` e.g. Automations, or `lock` and `unlock` a Lock)
-- [ ] Add output/feedback on actions (e.g. use pterm)
+- [x] Add output/feedback on actions (e.g. use pterm)
 - [ ] Allow multiple devices on actions
 - [ ] Add optional positional for `list entities`, following the same logic as in `toggle`, `on` and `off` (e.g. matching short names and fuzzy matching)
-- [ ] Add possibility to add local mappings for devices in config
+- [x] Add possibility to add local mappings for devices in config
 - [ ] Add install methods (native, asdf, ...)

@@ -27,7 +27,7 @@ import (
 )
 
 // toggleCmd represents the toggle command
-func newVolumeCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newVolumeCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	volRange := util.MakeRangeString(0, 100)
 	cmd := &cobra.Command{
 		Use:     "volume",
@@ -44,9 +44,13 @@ func newVolumeCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			if !slices.Contains(volRange, args[1]) {
-				o.PrintError(fmt.Errorf("volume needs to be 1-100"))
+				o.FprintError(out, fmt.Errorf("volume needs to be 1-100"))
 			}
-			h.VolumeSet(args[0], args[1])
+			obj, state, err := h.VolumeSet(args[0], args[1])
+			if err != nil {
+				o.FprintError(out, err)
+			}
+			o.FprintSuccessAction(out, obj, state)
 		},
 	}
 

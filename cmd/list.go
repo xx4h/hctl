@@ -15,13 +15,15 @@
 package cmd
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 
 	"github.com/xx4h/hctl/pkg"
 )
 
 // listCmd represents the list command
-func newListCmd(h *pkg.Hctl) *cobra.Command {
+func newListCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 
 	var domains []string
 	var services []string
@@ -33,9 +35,9 @@ func newListCmd(h *pkg.Hctl) *cobra.Command {
 		ValidArgs: []string{"entities", "services"},
 		RunE: func(_ *cobra.Command, args []string) error {
 			if len(args) == 0 || args[0] == "entities" {
-				h.DumpStates(domains)
+				h.DumpStates(out, domains)
 			} else if args[0] == "services" {
-				h.DumpServices(domains, services)
+				h.DumpServices(out, domains, services)
 			}
 			return nil
 		},

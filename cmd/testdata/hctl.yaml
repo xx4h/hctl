@@ -1,0 +1,8 @@
+hub:
+  type: hass
+  url: http://127.1.33.7/api
+  token: "test"
+device_map:
+  a: "media_player.player1"
+media_map:
+  party_horn: /path/to/part_horn.mp3

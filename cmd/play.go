@@ -23,7 +23,7 @@ import (
 )
 
 // toggleCmd represents the toggle command
-func newPlayCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newPlayCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "play",
 		Short:   "Play music from url on media player",
@@ -38,7 +38,7 @@ func newPlayCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		},
 		Run: func(_ *cobra.Command, args []string) {
-			h.PlayMusic(args[0], args[1])
+			h.PlayMusic(out, args[0], args[1])
 		},
 	}
 

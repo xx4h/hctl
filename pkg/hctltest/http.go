@@ -32,12 +32,16 @@ func MockServer(t testing.TB) *httptest.Server {
 	testdir := filepath.Dir(filename)
 	t.Helper()
 	mux := http.NewServeMux()
+
+	// handle default entry point and return API running
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write([]byte(`{"message": "API running."}`)); err != nil {
 			t.Errorf("Error writing data: %v", err)
 		}
 	})
+
+	// get all services
 	mux.HandleFunc("/services", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		data, err := os.ReadFile(fmt.Sprintf("%s/testdata/services.json", testdir))
@@ -48,6 +52,8 @@ func MockServer(t testing.TB) *httptest.Server {
 			t.Errorf("Error writing data: %v", err)
 		}
 	})
+
+	// get all states
 	mux.HandleFunc("/states", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		data, err := os.ReadFile(fmt.Sprintf("%s/testdata/states.json", testdir))
@@ -58,6 +64,8 @@ func MockServer(t testing.TB) *httptest.Server {
 			t.Errorf("Error writing data: %v", err)
 		}
 	})
+
+	// Update entity in domain/service
 	mux.HandleFunc("POST /services/{domain}/{service}", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		body, err := io.ReadAll(r.Body)

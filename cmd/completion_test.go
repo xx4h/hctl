@@ -17,16 +17,13 @@ package cmd
 import (
 	"testing"
 
-	"github.com/xx4h/hctl/pkg"
 	"github.com/xx4h/hctl/pkg/hctltest"
 )
 
 func Test_compListStates(t *testing.T) {
 	ms := hctltest.MockServer(t)
-	h, err := pkg.NewHctl(false)
-	if err != nil {
-		t.Errorf("Error createing new Hctl instance: %+v", err)
-	}
+	h := newTestingHctl(t)
+
 	if err := h.SetConfigValue("hub.url", ms.URL); err != nil {
 		t.Errorf("Could not set hub.url to %s: %+v", ms.URL, err)
 	}
@@ -47,42 +44,42 @@ func Test_compListStates(t *testing.T) {
 			nil,
 			[]string{"brightness"},
 			"",
-			5,
+			6,
 		},
 		"serviceCap turn_on": {
 			nil,
 			[]string{"turn_on"},
 			nil,
 			"",
-			10,
+			11,
 		},
 		"serviceCap turn_on + state off": {
 			nil,
 			[]string{"turn_on"},
 			nil,
 			"off",
-			4,
+			5,
 		},
 		"serviceCap turn_off + state on": {
 			nil,
 			[]string{"turn_off"},
 			nil,
 			"on",
-			6,
+			7,
 		},
 		"serviceCap play_media + attrib device_class": {
 			nil,
 			[]string{"play_media"},
 			[]string{"device_class"},
 			"",
-			1,
+			2,
 		},
 		"serviceCap play_media + attrib device_class or video_out": {
 			nil,
 			[]string{"play_media"},
 			[]string{"device_class", "video_out"},
 			"",
-			2,
+			3,
 		},
 	}
 

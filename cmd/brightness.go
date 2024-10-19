@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"slices"
 
 	"github.com/rs/zerolog/log"
@@ -30,7 +31,7 @@ var (
 	brightnessRange = append([]string{"+", "-", "min", "mid", "max"}, util.MakeRangeString(1, 99)...)
 )
 
-func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
+func newBrightnessCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "brightness [+|-|min|max|1-99]",
 		Short:   "Change brightness",
@@ -57,9 +58,9 @@ func newBrightnessCmd(h *pkg.Hctl) *cobra.Command {
 			c := h.GetRest()
 			obj, state, sub, err := c.TurnLightOnBrightness(args[0], args[1])
 			if err != nil {
-				o.PrintError(err)
+				o.FprintError(out, err)
 			} else {
-				o.PrintSuccessAction(obj, state)
+				o.FprintSuccess(out, fmt.Sprintf("%s brightness set to %s%%", obj, args[1]))
 			}
 			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		},

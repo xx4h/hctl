@@ -62,13 +62,13 @@ func newRootCmd(h *pkg.Hctl, out io.Writer, _ []string) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newBrightnessCmd(h),
+		newBrightnessCmd(h, out),
 		newCompletionCmd(),
 		newConfigCmd(h, out),
 		newInitCmd(h),
-		newListCmd(h),
+		newListCmd(h, out),
 		newOffCmd(h, out),
-		newOnCmd(h),
+		newOnCmd(h, out),
 		newPlayCmd(h, out),
 		newToggleCmd(h, out),
 		newVersionCmd(out),
@@ -87,7 +87,7 @@ func RunCmd() {
 		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
 	}
 	log.Logger = log.Output(output)
-	h, err := pkg.NewHctl(true)
+	h, err := pkg.NewHctl(false)
 	if err != nil {
 		log.Fatal().Caller().Msgf("Error: %v", err)
 	}

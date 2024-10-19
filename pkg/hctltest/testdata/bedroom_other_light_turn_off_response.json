@@ -1,0 +1,32 @@
+[
+  {
+    "entity_id": "light.bedroom_other",
+    "state": "off",
+    "attributes": {
+      "min_color_temp_kelvin": 1538,
+      "max_color_temp_kelvin": 7142,
+      "min_mireds": 140,
+      "max_mireds": 650,
+      "effect_list": ["colorloop"],
+      "supported_color_modes": ["color_temp", "hs", "xy"],
+      "effect": null,
+      "color_mode": "xy",
+      "brightness": 70,
+      "color_temp_kelvin": null,
+      "color_temp": null,
+      "hs_color": [345.198, 89.02],
+      "rgb_color": [255, 28, 84],
+      "xy_color": [0.6447, 0.279],
+      "friendly_name": "Bedroom Other",
+      "supported_features": 44
+    },
+    "last_changed": "2024-10-19T09:06:48.406200+00:00",
+    "last_reported": "2024-10-19T09:06:48.406200+00:00",
+    "last_updated": "2024-10-19T09:06:48.406200+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW06",
+      "parent_id": null,
+      "user_id": "someuseridhash"
+    }
+  }
+]

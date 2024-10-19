@@ -33,7 +33,7 @@ const (
 	// editorconfig-checker-enable
 )
 
-func newConfigSetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newConfigSetCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "set PATH VALUE",
 		Short:   "Set config variables",
@@ -48,9 +48,9 @@ func newConfigSetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			if err := h.SetConfigValueWrite(args[0], args[1]); err != nil {
-				o.PrintError(err)
+				o.FprintError(out, err)
 			}
-			o.PrintSuccess(fmt.Sprintf("Option `%s` successfully set to `%s`.", args[0], args[1]))
+			o.FprintSuccess(out, fmt.Sprintf("Option `%s` successfully set to `%s`.", args[0], args[1]))
 		},
 	}
 

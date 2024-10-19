@@ -24,7 +24,7 @@ import (
 	o "github.com/xx4h/hctl/pkg/output"
 )
 
-func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "off",
@@ -40,9 +40,9 @@ func newOffCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 			c := h.GetRest()
 			obj, state, sub, err := c.TurnOff(args[0])
 			if err != nil {
-				o.PrintError(err)
+				o.FprintError(out, err)
 			} else {
-				o.PrintSuccessAction(obj, state)
+				o.FprintSuccessAction(out, obj, state)
 			}
 			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		},

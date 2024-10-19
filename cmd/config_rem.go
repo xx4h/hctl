@@ -33,7 +33,7 @@ const (
 	// editorconfig-checker-enable
 )
 
-func newConfigRemCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newConfigRemCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove PATH",
 		Short:   "Set config variables",
@@ -45,9 +45,9 @@ func newConfigRemCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			if err := h.RemoveConfigOptionWrite(args[0]); err != nil {
-				o.PrintError(err)
+				o.FprintError(out, err)
 			}
-			o.PrintSuccess(fmt.Sprintf("Option `%s` successfully removed.", args[0]))
+			o.FprintSuccess(out, fmt.Sprintf("Option `%s` successfully removed.", args[0]))
 		},
 	}
 

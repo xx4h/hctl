@@ -1,0 +1,21 @@
+[
+  {
+    "entity_id": "light.bedroom_main",
+    "state": "on",
+    "attributes": {
+      "supported_color_modes": ["onoff"],
+      "color_mode": null,
+      "all_on": false,
+      "friendly_name": "Bedroom Main",
+      "supported_features": 0
+    },
+    "last_changed": "2024-10-12T18:25:14.915796+00:00",
+    "last_reported": "2024-10-12T18:25:14.915796+00:00",
+    "last_updated": "2024-10-12T18:25:14.915796+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW05",
+      "parent_id": null,
+      "user_id": "someuseridhash"
+    }
+  }
+]

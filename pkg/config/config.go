@@ -87,6 +87,7 @@ func NewViper() (*viper.Viper, error) {
 	v.AddConfigPath(".")
 	v.AddConfigPath(path.Join(userDir, ".config/hctl"))
 	v.AddConfigPath(execDir)
+
 	return v, nil
 }
 
@@ -122,7 +123,10 @@ func NewConfig() (*Config, error) {
 	return cfg, nil
 }
 
-func (c *Config) LoadConfig() error {
+func (c *Config) LoadConfig(configPath string) error {
+	if configPath != "" {
+		c.Viper.SetConfigFile(configPath)
+	}
 
 	if err := c.Viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {

@@ -36,7 +36,7 @@ const (
 	// editorconfig-checker-enable
 )
 
-func newConfigGetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
+func newConfigGetCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "get [PATH]",
 		Short:   "Get configuration parameters",
@@ -55,14 +55,22 @@ func newConfigGetCmd(h *pkg.Hctl, _ io.Writer) *cobra.Command {
 				a, _ := compListConfig("", []string{}, h)
 				slices.Sort(a)
 				for _, b := range a {
-					l := append([]any{}, b, h.GetConfigValue(b))
+					v, err := h.GetConfigValue(b)
+					l := []any{}
+					if err == nil {
+						l = append(l, b, v)
+					}
 					clist = append(clist, l)
 				}
 			} else {
-				l := append([]any{}, args[0], h.GetConfigValue(args[0]))
+				v, err := h.GetConfigValue(args[0])
+				if err != nil {
+					o.FprintError(out, err)
+				}
+				l := append([]any{}, args[0], v)
 				clist = append(clist, l)
 			}
-			o.PrintSuccessListWithHeader(header, clist)
+			o.FprintSuccessListWithHeader(out, header, clist)
 		},
 	}
 

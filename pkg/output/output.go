@@ -16,6 +16,7 @@ package output
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 
@@ -30,21 +31,42 @@ func GetBanner() (string, error) {
 		putils.LettersFromStringWithStyle("Ctl", pterm.FgWhite.ToStyle())).Srender()
 }
 
+func FprintSuccess(out io.Writer, str string) {
+	pterm.Fprint(out, pterm.Success.Sprintln(str))
+}
+
 func PrintSuccess(str string) {
 	pterm.Success.Println(str)
+}
+
+func FprintSuccessAction(out io.Writer, obj string, state string) {
+	pterm.Fprint(out, pterm.Success.Sprintfln("%s %s", obj, state))
 }
 
 func PrintSuccessAction(obj string, state string) {
 	pterm.Success.Printfln("%s %s", obj, state)
 }
 
-func PrintSuccessListWithHeader(header []interface{}, list [][]interface{}) {
+func ListWithHeader(header []interface{}, list [][]interface{}) *uitable.Table {
 	table := uitable.New()
 	table.AddRow(header...)
 	for _, entry := range list {
 		table.AddRow(entry...)
 	}
-	fmt.Println(table)
+	return table
+}
+
+func FprintSuccessListWithHeader(out io.Writer, header []interface{}, list [][]interface{}) {
+	fmt.Fprintln(out, ListWithHeader(header, list))
+}
+
+func PrintSuccessListWithHeader(header []interface{}, list [][]interface{}) {
+	fmt.Println(ListWithHeader(header, list))
+}
+
+func FprintError(out io.Writer, err error) {
+	pterm.Fprint(out, pterm.Error.Sprintln(err))
+	os.Exit(1)
 }
 
 func PrintError(err error) {
@@ -52,7 +74,7 @@ func PrintError(err error) {
 	os.Exit(1)
 }
 
-func PrintThreeLevelFlatTree(name string, tree map[string][]string) error {
+func PrintThreeLevelFlatTree(out io.Writer, name string, tree map[string][]string) error {
 	t := pterm.TreeNode{
 		Text:     name,
 		Children: []pterm.TreeNode{},
@@ -80,5 +102,11 @@ func PrintThreeLevelFlatTree(name string, tree map[string][]string) error {
 		t.Children = append(t.Children, g)
 	}
 
-	return pterm.DefaultTree.WithRoot(t).Render()
+	treeout, err := pterm.DefaultTree.WithRoot(t).Srender()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(out, treeout)
+	return nil
 }

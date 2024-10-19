@@ -1,0 +1,56 @@
+[
+  {
+    "entity_id": "media_player.player1",
+    "state": "idle",
+    "attributes": {
+      "volume_level": 0.30000001192092896,
+      "is_volume_muted": false,
+      "media_content_id": "http://10.10.10.10:1337/fake.mp3",
+      "media_content_type": "music",
+      "media_duration": 3.160816,
+      "media_position": 0,
+      "media_position_updated_at": "2024-10-12T20:57:22.888305+00:00",
+      "app_id": "ABCDE123",
+      "app_name": "Default Media Receiver",
+      "entity_picture_local": null,
+      "device_class": "speaker",
+      "friendly_name": "Player 1",
+      "supported_features": 152463
+    },
+    "last_changed": "2024-10-12T20:56:54.692016+00:00",
+    "last_reported": "2024-10-12T20:57:22.888625+00:00",
+    "last_updated": "2024-10-12T20:57:22.888625+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW01",
+      "parent_id": null,
+      "user_id": "someuseridhash"
+    }
+  },
+  {
+    "entity_id": "media_player.player1",
+    "state": "playing",
+    "attributes": {
+      "volume_level": 0.30000001192092896,
+      "is_volume_muted": false,
+      "media_content_id": "http://10.10.10.10:1337/fake.mp3",
+      "media_content_type": "music",
+      "media_duration": 3.160816,
+      "media_position": 0,
+      "media_position_updated_at": "2024-10-12T20:57:23.012272+00:00",
+      "app_id": "ABCDE123",
+      "app_name": "Default Media Receiver",
+      "entity_picture_local": null,
+      "device_class": "speaker",
+      "friendly_name": "Player 1",
+      "supported_features": 152463
+    },
+    "last_changed": "2024-10-12T20:57:23.012695+00:00",
+    "last_reported": "2024-10-12T20:57:23.012695+00:00",
+    "last_updated": "2024-10-12T20:57:23.012695+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW01",
+      "parent_id": null,
+      "user_id": "someuseridhash"
+    }
+  }
+]

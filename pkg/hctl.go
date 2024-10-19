@@ -16,6 +16,7 @@ package pkg
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"time"
@@ -37,13 +38,13 @@ type Hctl struct {
 	// log *zerolog.Logger
 }
 
-func NewHctl(loadCfg bool) (*Hctl, error) {
+func NewHctl(testing bool) (*Hctl, error) {
 	cfg, err := config.NewConfig()
 	if err != nil {
 		return nil, err
 	}
-	if loadCfg {
-		err := cfg.LoadConfig()
+	if !testing {
+		err := cfg.LoadConfig("")
 		if err != nil {
 			return nil, err
 		}
@@ -52,6 +53,14 @@ func NewHctl(loadCfg bool) (*Hctl, error) {
 	return &Hctl{
 		cfg: cfg,
 	}, nil
+}
+
+func (h *Hctl) LoadConfig(configPath string) error {
+	err := h.cfg.LoadConfig(configPath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *Hctl) InitializeConfig(path string) {
@@ -67,13 +76,13 @@ func (h *Hctl) CompletionShortNamesEnabled() bool {
 	return h.cfg.Completion.ShortNames
 }
 
-func (h *Hctl) GetConfigValue(p string) any {
+func (h *Hctl) GetConfigValue(p string) (any, error) {
 	v, err := h.cfg.GetValueByPath(p)
 	if err != nil {
 		log.Debug().Caller().Msgf("Error: %+v", err)
-		o.PrintError(err)
+		return nil, err
 	}
-	return v
+	return v, nil
 }
 
 func (h *Hctl) SetConfigValue(p string, v string) error {
@@ -151,24 +160,24 @@ func (h *Hctl) GetFilteredStatesMap(domains []string) (map[string][]string, erro
 	return h.GetRest().GetFilteredStatesMap(domains)
 }
 
-func (h *Hctl) DumpServices(domains []string, services []string) {
+func (h *Hctl) DumpServices(out io.Writer, domains []string, services []string) {
 	t := h.GetFilteredServicesMap(domains, services)
-	if err := o.PrintThreeLevelFlatTree("Services", t); err != nil {
+	if err := o.PrintThreeLevelFlatTree(out, "Services", t); err != nil {
 		log.Error().Msgf("Error: %+v", err)
 	}
 }
 
-func (h *Hctl) DumpStates(domains []string) {
+func (h *Hctl) DumpStates(out io.Writer, domains []string) {
 	t, err := h.GetFilteredStatesMap(domains)
 	if err != nil {
-		o.PrintError(err)
+		o.FprintError(out, err)
 	}
-	if err := o.PrintThreeLevelFlatTree("States", t); err != nil {
+	if err := o.PrintThreeLevelFlatTree(out, "States", t); err != nil {
 		log.Error().Msgf("Error: %+v", err)
 	}
 }
 
-func (h *Hctl) PlayMusic(obj string, mediaURL string) {
+func (h *Hctl) PlayMusic(out io.Writer, obj string, mediaURL string) {
 	if mapURL, ok := h.cfg.MediaMap[mediaURL]; ok {
 		mediaURL = mapURL
 	}
@@ -180,7 +189,7 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		obj, state, sub, err := h.GetRest().PlayMusic(obj, mediaURL, mediaURL)
 		if err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
-			o.PrintError(err)
+			o.FprintError(out, err)
 		}
 
 		o.PrintSuccessAction(obj, state)
@@ -193,7 +202,7 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		_, err := os.Stat(mediaURL)
 		if err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
-			o.PrintError(err)
+			o.FprintError(out, err)
 		}
 
 		// get new Media instance
@@ -208,10 +217,10 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 		obj, state, sub, err := h.GetRest().PlayMusic(obj, s.GetURL(), s.GetMediaName())
 		if err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
-			o.PrintError(err)
+			o.FprintError(out, err)
 		}
 
-		o.PrintSuccessAction(obj, state)
+		o.FprintSuccessAction(out, obj, state)
 		log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		// TODO: find better way to ensure we don't close the server before file has been served
 		// -> RaceCondition
@@ -224,19 +233,19 @@ func (h *Hctl) PlayMusic(obj string, mediaURL string) {
 	}
 }
 
-func (h *Hctl) VolumeSet(obj string, volume string) {
+func (h *Hctl) VolumeSet(obj string, volume string) (string, string, error) {
 	vint, err := strconv.Atoi(volume)
 	if err != nil {
 		log.Debug().Caller().Msgf("Error: %+v", err)
-		o.PrintError(err)
+		return "", "", err
 	}
 	obj, state, sub, err := h.GetRest().VolumeSet(obj, vint)
 	if err != nil {
 		log.Debug().Caller().Msgf("Error: %+v", err)
-		o.PrintError(err)
+		return "", "", err
 	}
-	o.PrintSuccessAction(obj, state)
 	log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
+	return obj, state, nil
 }
 
 func (h *Hctl) SetLogging(level string) error {

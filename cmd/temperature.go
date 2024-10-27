@@ -15,10 +15,12 @@
 package cmd
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
+
 	"github.com/xx4h/hctl/pkg"
 	o "github.com/xx4h/hctl/pkg/output"
-	"io"
 )
 
 func newTemperatureCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {

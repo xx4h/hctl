@@ -248,6 +248,21 @@ func (h *Hctl) VolumeSet(obj string, volume string) (string, string, error) {
 	return obj, state, nil
 }
 
+func (h *Hctl) TemperatureSet(obj string, temp string) (string, string, error) {
+	tint, err := strconv.ParseFloat(temp, 64)
+	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
+		return "", "", err
+	}
+	obj, state, sub, err := h.GetRest().TemperatureSet(obj, tint)
+	if err != nil {
+		log.Debug().Caller().Msgf("Error: %+v", err)
+		return "", "", err
+	}
+	log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
+	return obj, state, nil
+}
+
 func (h *Hctl) SetLogging(level string) error {
 	lvl, err := zerolog.ParseLevel(level)
 	if err != nil {

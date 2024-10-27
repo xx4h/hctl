@@ -14,35 +14,27 @@
 
 package rest
 
-import (
-	"reflect"
-	"testing"
+import "fmt"
 
-	"github.com/xx4h/hctl/pkg/hctltest"
-)
-
-const (
-	statesCount = 11
-)
-
-func Test_GetStates(t *testing.T) {
-	ms := hctltest.MockServer(t)
-	h := &Hass{
-		APIURL: ms.URL,
-		Token:  "test_token",
-	}
-	defer ms.Close()
-	s, err := h.GetStates()
+func (h *Hass) TemperatureSet(obj string, temp float64) (string, string, string, error) {
+	svc := "set_temperature"
+	sub, obj, err := h.entityArgHandler([]string{obj}, svc)
 	if err != nil {
-		t.Errorf("Error getting states: %v", err)
+		return "", "", "", err
 	}
-	st := reflect.TypeOf(s)
-	wt := reflect.TypeOf([]HassState{})
-	if st != wt {
-		t.Errorf("got %s, want %s", st, wt)
+
+	payload := map[string]any{
+		"entity_id":   fmt.Sprintf("%s.%s", sub, obj),
+		"temperature": fmt.Sprintf("%.1f", temp),
 	}
-	cs := len(s)
-	if cs != statesCount {
-		t.Errorf("got %d, want %d", cs, statesCount)
+	res, err := h.api("POST", fmt.Sprintf("/services/%s/%s", sub, svc), payload)
+	if err != nil {
+		return "", "", "", err
 	}
+
+	if err := h.getResult(res); err != nil {
+		return "", "", "", err
+	}
+	return obj, fmt.Sprintf("temperature set to %.1f", temp), sub, nil
+
 }

@@ -283,5 +283,35 @@
       "parent_id": null,
       "user_id": null
     }
+  },
+  {
+    "entity_id": "climate.heating",
+    "state": "heat",
+    "attributes": {
+      "hvac_modes": [
+        "heat",
+        "off"
+      ],
+      "min_temp": 10,
+      "max_temp": 32,
+      "preset_modes": [
+        "none",
+        "eco"
+      ],
+      "current_temperature": 21.8,
+      "temperature": 21.0,
+      "hvac_action": "idle",
+      "preset_mode": "none",
+      "friendly_name": "Heating",
+      "supported_features": 401
+    },
+    "last_changed": "2024-10-26T15:44:30.745281+00:00",
+    "last_reported": "2024-10-27T12:16:14.818589+00:00",
+    "last_updated": "2024-10-27T12:16:14.818589+00:00",
+    "context": {
+      "id": "ABDCDEFGHIJKLMNOPQRSTUVW11",
+      "parent_id": null,
+      "user_id": null
+    }
   }
 ]

@@ -12,37 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package rest
+package cmd
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/xx4h/hctl/pkg/hctltest"
 )
 
-const (
-	statesCount = 11
-)
-
-func Test_GetStates(t *testing.T) {
+func Test_newCmdTemperature(t *testing.T) {
 	ms := hctltest.MockServer(t)
-	h := &Hass{
-		APIURL: ms.URL,
-		Token:  "test_token",
+	h := newTestingHctl(t)
+	if err := h.SetConfigValue("hub.url", ms.URL); err != nil {
+		t.Error(err)
 	}
-	defer ms.Close()
-	s, err := h.GetStates()
-	if err != nil {
-		t.Errorf("Error getting states: %v", err)
+
+	var tests = map[string]cmdTest{
+		"set volume": {
+			"temperature climate.heating 21.5",
+			"(?m)^.*heating temperature set to 21.5",
+			"",
+		},
 	}
-	st := reflect.TypeOf(s)
-	wt := reflect.TypeOf([]HassState{})
-	if st != wt {
-		t.Errorf("got %s, want %s", st, wt)
-	}
-	cs := len(s)
-	if cs != statesCount {
-		t.Errorf("got %d, want %d", cs, statesCount)
-	}
+
+	testCmd(t, h, tests)
 }

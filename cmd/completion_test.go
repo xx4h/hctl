@@ -51,7 +51,7 @@ func Test_compListStates(t *testing.T) {
 			[]string{"turn_on"},
 			nil,
 			"",
-			11,
+			12,
 		},
 		"serviceCap turn_on + state off": {
 			nil,
@@ -80,6 +80,13 @@ func Test_compListStates(t *testing.T) {
 			[]string{"device_class", "video_out"},
 			"",
 			3,
+		},
+		"serviceCap climate": {
+			nil,
+			[]string{"set_temperature"},
+			nil,
+			"",
+			2,
 		},
 	}
 

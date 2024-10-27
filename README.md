@@ -37,6 +37,7 @@ And here we are!
 - Set brightness on all capable devices
 - Play local and remote music files
 - Set volume on media players
+- Set temperature on capable devices
 - List all Domains & Domain-Services
 - Completion for `bash`, `zsh`, `fish` and `powershell`, auto completing all capable devices
 - Add shortcuts/mappings for devices and media files

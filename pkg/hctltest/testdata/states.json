@@ -288,16 +288,10 @@
     "entity_id": "climate.heating",
     "state": "heat",
     "attributes": {
-      "hvac_modes": [
-        "heat",
-        "off"
-      ],
+      "hvac_modes": ["heat", "off"],
       "min_temp": 10,
       "max_temp": 32,
-      "preset_modes": [
-        "none",
-        "eco"
-      ],
+      "preset_modes": ["none", "eco"],
       "current_temperature": 21.8,
       "temperature": 21.0,
       "hvac_action": "idle",

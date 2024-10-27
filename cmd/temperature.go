@@ -25,7 +25,7 @@ func newTemperatureCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "temperature",
 		Short:   "Set the temperature of a climate entity",
-		Aliases: []string{"t"},
+		Aliases: []string{"te", "temp"},
 		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) == 0 {

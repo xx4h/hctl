@@ -2,8 +2,8 @@ class Hctl < Formula
   desc "Tool to control your Home Assistant devices from the command-line"
   homepage "https://github.com/xx4h/hctl"
   url "https://github.com/xx4h/hctl.git",
-      tag:      "v0.5.0",
-      revision: "9c3a308600bce627bd79e0d3d1a2f05b7a13c347"
+      tag:      "v0.6.0",
+      revision: "fc9c13f60efb7e6c1af8667b0d527ba68e9ff041"
   license "Apache-2.0"
   head "https://github.com/xx4h/hctl.git", branch: "main"
 

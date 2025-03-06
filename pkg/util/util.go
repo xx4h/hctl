@@ -69,18 +69,18 @@ func GetLocalIP() string {
 	return localAddress.IP.String()
 }
 
-func MakeRange(min, max int) []int {
-	a := make([]int, max-min+1)
+func MakeRange(mini, maxi int) []int {
+	a := make([]int, maxi-mini+1)
 	for i := range a {
-		a[i] = min + i
+		a[i] = mini + i
 	}
 	return a
 }
 
-func MakeRangeString(min, max int) []string {
-	a := make([]string, max-min+1)
+func MakeRangeString(mini, maxi int) []string {
+	a := make([]string, maxi-mini+1)
 	for i := range a {
-		a[i] = fmt.Sprint(min + i)
+		a[i] = fmt.Sprint(mini + i)
 	}
 	return a
 }

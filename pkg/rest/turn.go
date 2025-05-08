@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-func (h *Hass) turn(state, domain, device, brightness string, rgb []int) error {
+func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTemp int) error {
 	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
 	// 	return err
 	// }
@@ -31,6 +31,10 @@ func (h *Hass) turn(state, domain, device, brightness string, rgb []int) error {
 
 	if len(rgb) == 3 {
 		payload["rgb_color"] = rgb
+	}
+
+	if colorTemp >= 153 && colorTemp <= 500 {
+		payload["color_temp"] = colorTemp
 	}
 
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", domain, state), payload)
@@ -50,7 +54,7 @@ func (h *Hass) TurnOff(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "off", sub, h.turn("off", sub, obj, "", nil)
+	return obj, "off", sub, h.turn("off", sub, obj, "", nil, 0)
 }
 
 func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
@@ -58,7 +62,7 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "on", sub, h.turn("on", sub, obj, "", nil)
+	return obj, "on", sub, h.turn("on", sub, obj, "", nil, 0)
 }
 
 func (h *Hass) brightStep(domain, device, updown string) (string, error) {
@@ -124,7 +128,7 @@ func scaleBrightness(percent string) (string, error) {
 	return fmt.Sprintf("%d", scaled), nil
 }
 
-func (h *Hass) TurnLightOnCustom(device, brightness string, color string) (string, string, string, error) {
+func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorTemp int) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
 	switch brightness {
 	case "-":
@@ -158,7 +162,7 @@ func (h *Hass) TurnLightOnCustom(device, brightness string, color string) (strin
 		}
 	}
 
-	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb)
+	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb, colorTemp)
 }
 
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {

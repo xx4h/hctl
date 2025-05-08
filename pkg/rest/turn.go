@@ -17,9 +17,10 @@ package rest
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
-func (h *Hass) turn(state, domain, device, brightness string) error {
+func (h *Hass) turn(state, domain, device, brightness string, rgb []int) error {
 	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
 	// 	return err
 	// }
@@ -27,6 +28,11 @@ func (h *Hass) turn(state, domain, device, brightness string) error {
 	if brightness != "" {
 		payload["brightness"] = brightness
 	}
+
+	if len(rgb) == 3 {
+		payload["rgb_color"] = rgb
+	}
+
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", domain, state), payload)
 	if err != nil {
 		return err
@@ -44,7 +50,7 @@ func (h *Hass) TurnOff(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "off", sub, h.turn("off", sub, obj, "")
+	return obj, "off", sub, h.turn("off", sub, obj, "", nil)
 }
 
 func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
@@ -52,7 +58,7 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "on", sub, h.turn("on", sub, obj, "")
+	return obj, "on", sub, h.turn("on", sub, obj, "", nil)
 }
 
 func (h *Hass) brightStep(domain, device, updown string) (string, error) {
@@ -93,7 +99,23 @@ func (h *Hass) brightStep(domain, device, updown string) (string, error) {
 	}
 }
 
-func (h *Hass) TurnLightOnBrightness(device, brightness string) (string, string, string, error) {
+func parseRGB(color string) ([]int, error) {
+	var rgb []int
+	parts := strings.Split(color, ",")
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("color must be in format R,G,B")
+	}
+	for _, part := range parts {
+		val, err := strconv.Atoi(strings.TrimSpace(part))
+		if err != nil || val < 0 || val > 255 {
+			return nil, fmt.Errorf("invalid RGB value: %s", part)
+		}
+		rgb = append(rgb, val)
+	}
+	return rgb, nil
+}
+
+func (h *Hass) TurnLightOnCustom(device, brightness string, color string) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
 	switch brightness {
 	case "-":
@@ -110,7 +132,16 @@ func (h *Hass) TurnLightOnBrightness(device, brightness string) (string, string,
 	if err != nil {
 		return "", "", "", err
 	}
-	return device, "on", domain, h.turn("on", domain, device, brightness)
+
+	var rgb []int
+	if color != "" {
+		rgb, err = parseRGB(color)
+		if err != nil {
+			return "", "", "", err
+		}
+	}
+
+	return device, "on", domain, h.turn("on", domain, device, brightness, rgb)
 }
 
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {

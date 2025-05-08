@@ -115,6 +115,15 @@ func parseRGB(color string) ([]int, error) {
 	return rgb, nil
 }
 
+func scaleBrightness(percent string) (string, error) {
+	val, err := strconv.Atoi(percent)
+	if err != nil || val < 1 || val > 99 {
+		return "", fmt.Errorf("Invalid brightness percentage: %s", percent)
+	}
+	scaled := int(float64(val) / 99.0 * 255.0)
+	return fmt.Sprintf("%d", scaled), nil
+}
+
 func (h *Hass) TurnLightOnCustom(device, brightness string, color string) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
 	switch brightness {
@@ -141,7 +150,15 @@ func (h *Hass) TurnLightOnCustom(device, brightness string, color string) (strin
 		}
 	}
 
-	return device, "on", domain, h.turn("on", domain, device, brightness, rgb)
+	var brightnessScaled string
+	if brightness != "" {
+		brightnessScaled, err = scaleBrightness(brightness)
+		if err != nil {
+			return "", "", "", err
+		}
+	}
+
+	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb)
 }
 
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {

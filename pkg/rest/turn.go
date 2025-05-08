@@ -130,6 +130,11 @@ func scaleBrightness(percent string) (string, error) {
 
 func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorTemp int) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
+
+	if color != "" && colorTemp != 0 {
+		return "", "", "", fmt.Errorf("Cannot specify both RGB color and color temperature at the same time")
+	}
+
 	switch brightness {
 	case "-":
 		brightness, err = h.brightStep(domain, device, "-")

@@ -174,6 +174,15 @@ func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorT
 	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb, colorTemp, transition)
 }
 
+func (h *Hass) TurnLightOffTransition(device string, transition float64) (string, string, string, error) {
+	domain, device, err := h.entityArgHandler([]string{device}, "turn_off")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return device, "off", domain, h.turn("off", domain, device, "", nil, 0, transition)
+}
+
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {
 	return h.TurnOff("light", obj)
 }

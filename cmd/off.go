@@ -25,9 +25,10 @@ import (
 )
 
 func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
+	var transition float64
 
 	cmd := &cobra.Command{
-		Use:   "off",
+		Use:   "off [--transition seconds]",
 		Short: "Switch or turn off a light or switch",
 		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -38,7 +39,13 @@ func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.TurnOff(args[0])
+			var obj, state, sub string
+			var err error
+			if transition != 0 {
+				obj, state, sub, err = c.TurnLightOffTransition(args[0], transition)
+			} else {
+				obj, state, sub, err = c.TurnOff(args[0])
+			}
 			if err != nil {
 				o.FprintError(out, err)
 			} else {
@@ -47,6 +54,8 @@ func newOffCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		},
 	}
+
+	cmd.PersistentFlags().Float64Var(&transition, "transition", 0, "Set transition time in seconds")
 
 	return cmd
 }

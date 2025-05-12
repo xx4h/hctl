@@ -16,8 +16,11 @@ package rest
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTemp int) error {
@@ -76,6 +79,8 @@ func (h *Hass) brightStep(domain, device, updown string) (string, error) {
 		return "", fmt.Errorf("state `%s.%s` has no attribute `brightness`", domain, device)
 	}
 
+	log.Debug().Msgf("[DEBUG] raw brightness from state: %v\n", curany)
+
 	// handle nil state (e.g. when device is off)
 	if curany == nil {
 		return "", nil
@@ -86,22 +91,33 @@ func (h *Hass) brightStep(domain, device, updown string) (string, error) {
 		return "", err
 	}
 
-	diff := i % 10
+	// Convert raw brightness (0-255) to 1-99 percentage scale
+	p := int(math.Round(float64(i) / 255.0 * 99.0))
+	log.Debug().Msgf("[DEBUG] computed percent brightness: %d\n", p)
+	if p < 1 {
+		p = 1
+	} else if p > 99 {
+		p = 99
+	}
+
+	diff := p % 10
 	switch updown {
 	case "+":
-		b := i + (10 - diff)
-		if b == 100 {
+		b := p + (10 - diff)
+		if b > 99 {
 			b = 99
 		}
+		log.Debug().Msgf("[debug] brightness '+' stepped to %d\n", b)
 		return fmt.Sprintf("%d", b), nil
 	case "-":
-		b := i - diff
+		b := p - diff
 		if diff == 0 {
-			b = i - 10
+			b = p - 10
 		}
-		if b == 0 {
+		if b < 1 {
 			b = 1
 		}
+		log.Debug().Msgf("[debug] brightness '-' stepped to %d\n", b)
 		return fmt.Sprintf("%d", b), nil
 	default:
 		return "", fmt.Errorf("no such brightStep: %s", updown)
@@ -129,7 +145,7 @@ func scaleBrightness(percent string) (string, error) {
 	if err != nil || val < 1 || val > 99 {
 		return "", fmt.Errorf("Invalid brightness percentage: %s", percent)
 	}
-	scaled := int(float64(val) / 99.0 * 255.0)
+	scaled := int(math.Round(float64(val) / 99.0 * 255.0))
 	return fmt.Sprintf("%d", scaled), nil
 }
 

@@ -146,13 +146,8 @@ func scaleBrightness(percent string) (string, error) {
 	return fmt.Sprintf("%d", scaled), nil
 }
 
-func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorTemp int) (string, string, string, error) {
-	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
-
-	if color != "" && colorTemp != 0 {
-		return "", "", "", fmt.Errorf("Cannot specify both RGB color and color temperature at the same time")
-	}
-
+func (h *Hass) handleBrightness(domain, device, brightness string) (string, error) {
+	var err error
 	switch brightness {
 	case "-":
 		brightness, err = h.brightStep(domain, device, "-")
@@ -165,6 +160,20 @@ func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorT
 	case "max":
 		brightness = "99"
 	}
+	return brightness, err
+}
+
+func (h *Hass) TurnLightOnCustom(device, brightness, color string, colorTemp int) (string, string, string, error) {
+	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	if color != "" && colorTemp != 0 {
+		return "", "", "", fmt.Errorf("Cannot specify both RGB color and color temperature at the same time")
+	}
+
+	brightness, err = h.handleBrightness(domain, device, brightness)
 	if err != nil {
 		return "", "", "", err
 	}

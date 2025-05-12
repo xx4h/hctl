@@ -76,6 +76,11 @@ func (h *Hass) brightStep(domain, device, updown string) (string, error) {
 		return "", fmt.Errorf("state `%s.%s` has no attribute `brightness`", domain, device)
 	}
 
+	// handle nil state (e.g. when device is off)
+	if curany == nil {
+		return "", nil
+	}
+
 	i, err := strconv.Atoi(fmt.Sprintf("%.0f", curany))
 	if err != nil {
 		return "", err

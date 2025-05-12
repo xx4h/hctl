@@ -184,7 +184,7 @@
       "supported_color_modes": ["color_temp", "hs", "xy"],
       "effect": null,
       "color_mode": "xy",
-      "brightness": 1,
+      "brightness": 120,
       "color_temp_kelvin": null,
       "color_temp": null,
       "hs_color": [9.529, 66.667],

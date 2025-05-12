@@ -26,9 +26,11 @@ import (
 
 func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	var brightness string
+	var color string
+	var colorTemp int
 
 	cmd := &cobra.Command{
-		Use:   "on [-b|--brightness +|-|min|max|1-99]",
+		Use:   "on [-b|--brightness +|-|min|max|1-99] [-c|--color R,G,B] [-t|--color-temp 1000-10000]",
 		Short: "Switch or turn on a light or switch",
 		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -53,8 +55,8 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 			c := h.GetRest()
 			var obj, state, sub string
 			var err error
-			if brightness != "" {
-				obj, state, sub, err = c.TurnLightOnBrightness(args[0], brightness)
+			if brightness != "" || color != "" || colorTemp != 0 {
+				obj, state, sub, err = c.TurnLightOnCustom(args[0], brightness, color, colorTemp)
 			} else {
 				obj, state, sub, err = c.TurnOn(args[0])
 			}
@@ -68,6 +70,8 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&brightness, "brightness", "b", "", "Set brightness")
+	cmd.PersistentFlags().StringVarP(&color, "color", "c", "", "Set RGB color in format R,G,B")
+	cmd.PersistentFlags().IntVarP(&colorTemp, "color-temp", "t", 0, "Set color temperature in Kelvin (1000-10000)")
 	err := cmd.RegisterFlagCompletionFunc("brightness", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return brightnessRange, cobra.ShellCompDirectiveKeepOrder | cobra.ShellCompDirectiveNoFileComp
 	})

@@ -38,7 +38,7 @@ func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTe
 		payload["rgb_color"] = rgb
 	}
 
-	if colorTemp >= 153 && colorTemp <= 500 {
+	if colorTemp >= 100 && colorTemp <= 1000 {
 		payload["color_temp"] = colorTemp
 	}
 

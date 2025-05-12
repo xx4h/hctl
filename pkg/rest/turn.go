@@ -21,6 +21,10 @@ import (
 	"strings"
 )
 
+func kelvinToMired(k int) int {
+	return int(math.Round(1_000_000.0 / float64(k)))
+}
+
 func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTemp int) error {
 	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
 	// 	return err
@@ -179,6 +183,13 @@ func (h *Hass) TurnLightOnCustom(device, brightness string, color string, colorT
 		if err != nil {
 			return "", "", "", err
 		}
+	}
+
+	if colorTemp != 0 {
+		if colorTemp < 1000 || colorTemp > 10000 {
+			return "", "", "", fmt.Errorf("color temperature must be 1000-10000 K")
+		}
+		colorTemp = kelvinToMired(colorTemp)
 	}
 
 	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb, colorTemp)

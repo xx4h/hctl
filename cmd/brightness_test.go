@@ -33,6 +33,36 @@ func Test_newCmdBrightness(t *testing.T) {
 			"(?m)^.*livingroom_other brightness set to 20%",
 			"",
 		},
+		"max brightness": {
+			"brightness light.livingroom_other max",
+			"(?m)^.*livingroom_other brightness set to max%",
+			"",
+		},
+		"min brightness": {
+			"brightness light.livingroom_other min",
+			"(?m)^.*livingroom_other brightness set to min%",
+			"",
+		},
+		"increase brightness (offline)": {
+			"brightness light.livingroom_other +",
+			`(?m)^.*livingroom_other brightness set to \+%`,
+			"",
+		},
+		"decrease brightness (offline)": {
+			"brightness light.livingroom_other -",
+			"(?m)^.*livingroom_other brightness set to -%",
+			"",
+		},
+		"increase brightness": {
+			"brightness light.bedroom_other +",
+			`(?m)^.*bedroom_other brightness set to \+%`,
+			"",
+		},
+		"decrease brightness": {
+			"brightness light.bedroom_other -",
+			"(?m)^.*bedroom_other brightness set to -%",
+			"",
+		},
 	}
 
 	testCmd(t, h, tests)

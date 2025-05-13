@@ -56,7 +56,7 @@ func newBrightnessCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.TurnLightOnCustom(args[0], args[1], "", 0)
+			obj, state, sub, err := c.TurnLightOnCustom(args[0], args[1], "", 0, 0)
 			if err != nil {
 				o.FprintError(out, err)
 			} else {

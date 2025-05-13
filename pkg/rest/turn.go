@@ -25,7 +25,7 @@ func kelvinToMired(k int) int {
 	return int(math.Round(1_000_000.0 / float64(k)))
 }
 
-func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTemp int) error {
+func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTemp int, transition float64) error {
 	// if err := h.checkEntity(sub, fmt.Sprintf("turn_%s", state), obj); err != nil {
 	// 	return err
 	// }
@@ -40,6 +40,10 @@ func (h *Hass) turn(state, domain, device, brightness string, rgb []int, colorTe
 
 	if colorTemp >= 100 && colorTemp <= 1000 {
 		payload["color_temp"] = colorTemp
+	}
+
+	if transition > 0 {
+		payload["transition"] = transition
 	}
 
 	res, err := h.api("POST", fmt.Sprintf("/services/%s/turn_%s", domain, state), payload)
@@ -59,7 +63,7 @@ func (h *Hass) TurnOff(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "off", sub, h.turn("off", sub, obj, "", nil, 0)
+	return obj, "off", sub, h.turn("off", sub, obj, "", nil, 0, 0)
 }
 
 func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
@@ -67,7 +71,7 @@ func (h *Hass) TurnOn(args ...string) (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	return obj, "on", sub, h.turn("on", sub, obj, "", nil, 0)
+	return obj, "on", sub, h.turn("on", sub, obj, "", nil, 0, 0)
 }
 
 func (h *Hass) brightStep(domain, device, updown string) (string, error) {
@@ -163,7 +167,7 @@ func (h *Hass) handleBrightness(domain, device, brightness string) (string, erro
 	return brightness, err
 }
 
-func (h *Hass) TurnLightOnCustom(device, brightness, color string, colorTemp int) (string, string, string, error) {
+func (h *Hass) TurnLightOnCustom(device, brightness, color string, colorTemp int, transition float64) (string, string, string, error) {
 	domain, device, err := h.entityArgHandler([]string{device}, "turn_on")
 	if err != nil {
 		return "", "", "", err
@@ -201,7 +205,16 @@ func (h *Hass) TurnLightOnCustom(device, brightness, color string, colorTemp int
 		colorTemp = kelvinToMired(colorTemp)
 	}
 
-	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb, colorTemp)
+	return device, "on", domain, h.turn("on", domain, device, brightnessScaled, rgb, colorTemp, transition)
+}
+
+func (h *Hass) TurnLightOffTransition(device string, transition float64) (string, string, string, error) {
+	domain, device, err := h.entityArgHandler([]string{device}, "turn_off")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return device, "off", domain, h.turn("off", domain, device, "", nil, 0, transition)
 }
 
 func (h *Hass) TurnLightOff(obj string) (string, string, string, error) {

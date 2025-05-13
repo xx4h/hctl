@@ -73,7 +73,7 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&brightness, "brightness", "b", "", "Set brightness")
 	cmd.PersistentFlags().StringVarP(&color, "color", "c", "", "Set RGB color in format R,G,B")
 	cmd.PersistentFlags().IntVarP(&colorTemp, "color-temp", "t", 0, "Set color temperature in Kelvin (1000-10000)")
-	cmd.PersistentFlags().Float64Var(&transition, "transition", 0, "Set transition time in seconds (e.g. 1.5)")
+	cmd.PersistentFlags().Float64VarP(&transition, "transition", "s", 0, "Set transition time in seconds (e.g. 1.5)")
 	err := cmd.RegisterFlagCompletionFunc("brightness", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return brightnessRange, cobra.ShellCompDirectiveKeepOrder | cobra.ShellCompDirectiveNoFileComp
 	})

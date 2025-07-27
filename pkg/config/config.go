@@ -316,7 +316,7 @@ func (c *Config) RemoveOptionByPath(p string) error {
 		c.Viper.Set(s[0], m)
 		return nil
 	}
-	return fmt.Errorf("Deleting `%s` is currently not supported, use set instead", s[1])
+	return fmt.Errorf("deleting `%s` is currently not supported, use set instead", s[1])
 }
 
 func (c *Config) SetValueByPath(p string, val any) error {

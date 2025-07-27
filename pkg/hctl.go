@@ -177,7 +177,7 @@ func (h *Hctl) DumpStates(out io.Writer, domains []string) {
 	}
 }
 
-func (h *Hctl) PlayMusic(out io.Writer, obj string, mediaURL string) {
+func (h *Hctl) PlayMusic(out io.Writer, target string, mediaURL string) {
 	if mapURL, ok := h.cfg.MediaMap[mediaURL]; ok {
 		mediaURL = mapURL
 	}
@@ -186,21 +186,19 @@ func (h *Hctl) PlayMusic(out io.Writer, obj string, mediaURL string) {
 	if ok := util.IsURL(mediaURL); ok {
 		// if we already have a url, just play it
 
-		obj, state, sub, err := h.GetRest().PlayMusic(obj, mediaURL, mediaURL)
-		if err != nil {
+		if obj, state, sub, err := h.GetRest().PlayMusic(target, mediaURL, mediaURL); err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.FprintError(out, err)
+		} else {
+			o.PrintSuccessAction(obj, state)
+			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		}
-
-		o.PrintSuccessAction(obj, state)
-		log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 
 	} else {
 		// if we don't have a url but a filepath
 
 		// check if file exists
-		_, err := os.Stat(mediaURL)
-		if err != nil {
+		if _, err := os.Stat(mediaURL); err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.FprintError(out, err)
 		}
@@ -214,7 +212,7 @@ func (h *Hctl) PlayMusic(out io.Writer, obj string, mediaURL string) {
 		}
 
 		// we are ready and send the url to play
-		obj, state, sub, err := h.GetRest().PlayMusic(obj, s.GetURL(), s.GetMediaName())
+		obj, state, sub, err := h.GetRest().PlayMusic(target, s.GetURL(), s.GetMediaName())
 		if err != nil {
 			log.Debug().Caller().Msgf("Error: %+v", err)
 			o.FprintError(out, err)

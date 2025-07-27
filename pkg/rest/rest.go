@@ -187,7 +187,7 @@ func (h *Hass) findEntity(name string, domain string, service string) (string, s
 			return d, n, nil
 		}
 	}
-	return "", "", fmt.Errorf("No Entity %s capable of %s", name, service)
+	return "", "", fmt.Errorf("no Entity %s capable of %s", name, service)
 }
 
 func (h *Hass) entityArgHandler(args []string, service string) (string, string, error) {

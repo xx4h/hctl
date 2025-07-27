@@ -104,7 +104,8 @@ func (m *Media) WaitForHTTPReady() error {
 	log.Debug().Caller().Msg("Waiting for HTTP server to be ready")
 	for i := 0; i < tries; i++ {
 		log.Debug().Caller().Msgf("Checking readiness endpoint: %s", readyEndpoint)
-		resp, err := http.Get(readyEndpoint) // nolint:gosec
+		//nolint:gosec,govet
+		resp, err := http.Get(readyEndpoint)
 		if err != nil {
 			time.Sleep(200 * time.Millisecond)
 			continue

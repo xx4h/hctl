@@ -26,14 +26,14 @@ import (
 
 func validateIsSection(p []string) error {
 	if len(p) == 1 {
-		return fmt.Errorf("Cannot set value for section: %s", p[0])
+		return fmt.Errorf("cannot set value for section: %s", p[0])
 	}
 	return nil
 }
 
 func validateNonEmptyKey(p []string) error {
 	if p[len(p)-1] == "" {
-		return fmt.Errorf("Cannot use empty key in %s", p[0])
+		return fmt.Errorf("cannot use empty key in %s", p[0])
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func validateNonEmptyKey(p []string) error {
 func validateLoggingString(value string) error {
 	_, err := zerolog.ParseLevel(value)
 	if err != nil {
-		return fmt.Errorf("Unknown log_level: %s (Supported: trace, debug, error, warn, info)", value)
+		return fmt.Errorf("unknown log_level: %s (Supported: trace, debug, error, warn, info)", value)
 	}
 	return nil
 }
@@ -86,12 +86,12 @@ func validateSetHub(path []string, value any) error {
 	switch opt {
 	case "type":
 		if value != "hass" {
-			return fmt.Errorf("Unknown hub type: %s (Supported: hass)", value)
+			return fmt.Errorf("unknown hub type: %s (Supported: hass)", value)
 		}
 	case "url":
 	case "token":
 	default:
-		return fmt.Errorf("Unknown config option for hub: %s", opt)
+		return fmt.Errorf("unknown config option for hub: %s", opt)
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func validateSetHandling(path []string, value any) error {
 			return fmt.Errorf("Handling fuzz needs to be true/false")
 		}
 	default:
-		return fmt.Errorf("Unknown config option for handling: %s", opt)
+		return fmt.Errorf("unknown config option for handling: %s", opt)
 	}
 	return nil
 }
@@ -121,7 +121,7 @@ func validateSetCompletion(path []string, value any) error {
 			return fmt.Errorf("Completion short_names needs to be true/false")
 		}
 	default:
-		return fmt.Errorf("Unknown config option for completion: %s", opt)
+		return fmt.Errorf("unknown config option for completion: %s", opt)
 	}
 	return nil
 }
@@ -145,13 +145,13 @@ func validateSetServe(path []string, value any) error {
 			return fmt.Errorf("Serve port needs to be a number")
 		}
 		if port < 1024 {
-			return fmt.Errorf("Use a non-well-known port (>1023)")
+			return fmt.Errorf("use a non-well-known port (>1023)")
 		}
 		if port > 65535 {
-			return fmt.Errorf("Usen a valid port in the range 1024-65535")
+			return fmt.Errorf("use a valid port in the range 1024-65535")
 		}
 	default:
-		return fmt.Errorf("Unknown config option for serve: %s", opt)
+		return fmt.Errorf("unknown config option for serve: %s", opt)
 	}
 	return nil
 }

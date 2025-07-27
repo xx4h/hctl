@@ -144,7 +144,7 @@ func parseRGB(color string) ([]int, error) {
 func scaleBrightness(percent string) (string, error) {
 	val, err := strconv.Atoi(percent)
 	if err != nil || val < 1 || val > 99 {
-		return "", fmt.Errorf("Invalid brightness percentage: %s", percent)
+		return "", fmt.Errorf("invalid brightness percentage: %s", percent)
 	}
 	scaled := int(math.Round(float64(val) / 99.0 * 255.0))
 	return fmt.Sprintf("%d", scaled), nil
@@ -174,7 +174,7 @@ func (h *Hass) TurnLightOnCustom(device, brightness, color string, colorTemp int
 	}
 
 	if color != "" && colorTemp != 0 {
-		return "", "", "", fmt.Errorf("Cannot specify both RGB color and color temperature at the same time")
+		return "", "", "", fmt.Errorf("cannot specify both RGB color and color temperature at the same time")
 	}
 
 	brightness, err = h.handleBrightness(domain, device, brightness)

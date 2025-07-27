@@ -66,6 +66,7 @@ func MockServer(t testing.TB) *httptest.Server {
 	})
 
 	// Update entity in domain/service
+	//nolint:govet
 	mux.HandleFunc("POST /services/{domain}/{service}", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		body, err := io.ReadAll(r.Body)

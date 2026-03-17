@@ -28,7 +28,7 @@ import (
 
 	config "github.com/xx4h/hctl/pkg/config"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/term"
 )
@@ -84,10 +84,10 @@ func configExists(config string) (bool, error) {
 }
 
 func getHubType() string {
-	hubType := "hass"
+	hubType := "hass" // codespell:ignore
 	// TODO: Enable as soon as we have more supported hub types
-	// supported := []string{"hass"}
-	// fmt.Printf("Which Hub Type are you using? (Supported: hass) [%s]: ", hubType)
+	// supported := []string{"hass"} // codespell:ignore
+	// fmt.Printf("Which Hub Type are you using? (Supported: hass) [%s]: ", hubType) // codespell:ignore
 	// _, err := fmt.Scanln(&hubType)
 	// if err != nil && err.Error() != "unexpected newline" {
 	// 	fmt.Printf("Error: %v\n", err)

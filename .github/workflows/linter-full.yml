@@ -19,18 +19,22 @@ jobs:
       statuses: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        # v5.0.1 (2025-11-13)
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
           # Full git history is needed to get a proper list of changed
           # files within `super-linter`
           fetch-depth: 0
+          persist-credentials: false
       - name: Lint Code Base
-        uses: super-linter/super-linter@v7
+        # v8.5.0 (2026-02-07)
+        uses: super-linter/super-linter@61abc07d755095a68f4987d1c2c3d1d64408f1f9
         env:
           # validate full codebase
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_JSCPD: false
           VALIDATE_GO: false
           VALIDATE_RUBY: false
+          VALIDATE_BIOME_FORMAT: false
           FILTER_REGEX_EXCLUDE: .*\.github/linters/\.golangci\.yml
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

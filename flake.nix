@@ -37,7 +37,7 @@
 
         src = ./.;
 
-        vendorHash = "sha256-YHYu3itE2OrKHizRO6NfzWNW6wjMtT6VdPevFpzbu58=";
+        vendorHash = "sha256-4FrLHwbZqvRE547PfeZowwNH1+zI4Ut04wtyvUfxGug=";
 
         env.CGO_ENABLED = 0;
 
@@ -87,7 +87,7 @@
 
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            go_1_24
+            go_1_25
             golangci-lint
             goreleaser
             gnumake

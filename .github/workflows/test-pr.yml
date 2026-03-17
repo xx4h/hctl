@@ -13,16 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        # v5.0.1 (2025-11-13)
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
           # Full git history is needed to get a proper list of changed
           # files within `super-linter`
           fetch-depth: 0
+          persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v5
+        # v6.3.0 (2026-02-25)
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417
+        with:
+          go-version: "1.25"
 
       - name: Go Build
         run: CGO_ENABLED=0 go build -v -trimpath -ldflags '-w -s' ./main.go
 
       - name: Go test
-        uses: robherley/go-test-action@v0
+        # v0.7.1 (2025-12-13)
+        uses: robherley/go-test-action@42a1975c97156330b5126c2f35ef0fb78c4c7154

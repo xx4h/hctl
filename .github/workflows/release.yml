@@ -18,17 +18,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        # v5.0.1 (2025-11-13)
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v5
+        # v6.3.0 (2026-02-25)
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417
         with:
-          go-version: stable
+          go-version: "1.25"
+          cache: false
       # More assembly might be required: Docker logins, GPG, etc.
       # It all depends on your needs.
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+        # v7.0.0 (2026-02-09)
+        uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
@@ -41,7 +46,8 @@ jobs:
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
       - name: Build Changelog
         id: github_release_changelog
-        uses: mikepenz/release-changelog-builder-action@v5
+        # v5.4.1 (2025-07-13)
+        uses: mikepenz/release-changelog-builder-action@c9dc8369bccbc41e0ac887f8fd674f5925d315f7
         with:
           configurationJson: |
             {
@@ -73,7 +79,8 @@ jobs:
                 ]
             }
       - name: Update Release
-        uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
+        # v0.6.0 (2024-03-14)
+        uses: mikepenz/action-gh-release@9a604afa5167a745eab07256a54e2f578a1a0c5e
         with:
           tag_name: ${{ github.event.inputs.to_tag }}
           body: ${{steps.github_release_changelog.outputs.changelog}}

@@ -84,10 +84,10 @@ func configExists(config string) (bool, error) {
 }
 
 func getHubType() string {
-	hubType := "hass" // codespell:ignore
+	hubType := "hass"
 	// TODO: Enable as soon as we have more supported hub types
-	// supported := []string{"hass"} // codespell:ignore
-	// fmt.Printf("Which Hub Type are you using? (Supported: hass) [%s]: ", hubType) // codespell:ignore
+	// supported := []string{"hass"}
+	// fmt.Printf("Which Hub Type are you using? (Supported: hass) [%s]: ", hubType)
 	// _, err := fmt.Scanln(&hubType)
 	// if err != nil && err.Error() != "unexpected newline" {
 	// 	fmt.Printf("Error: %v\n", err)

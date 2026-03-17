@@ -148,7 +148,7 @@ Download the latest release binary from the [Release Page](https://github.com/xx
 
 ```bash
 git clone https://github.com/xx4h/hctl.git && cd hctl
-make build && make local-install # intalls to ~/.local/bin/hctl
+make build && make local-install # installs to ~/.local/bin/hctl
 ```
 
 ## Configuration
@@ -228,7 +228,7 @@ light.livingroom_other
 switch.livingroom_warp
 
 # Completion with Short Names feature enabled will auto complete them like
-# e.g. if you want to turn off a switch you remeber starting with "sp"
+# e.g. if you want to turn off a switch you remember starting with "sp"
 hctl off li<TAB>
 hclt off livingroom_<TAB><TAB>
 livingroom_main     livingroom_corner      livingroom_other

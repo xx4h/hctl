@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 ## hctl specifics
-# exlude bin/ for builds
+# exclude bin/ for builds
 bin/
 # exclude dist/ for dist builds
 dist/

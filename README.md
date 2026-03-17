@@ -54,6 +54,76 @@ brew tap xx4h/hctl https://github.com/xx4h/hctl
 brew install xx4h/hctl/hctl
 ```
 
+### NixOS / Nix
+
+Run without installing:
+
+```bash
+nix run github:xx4h/hctl
+```
+
+Temporary shell with hctl available:
+
+```bash
+nix shell github:xx4h/hctl
+```
+
+Permanent install (imperative):
+
+```bash
+nix profile install github:xx4h/hctl
+```
+
+Permanent install (declarative via flake):
+
+```nix
+# flake.nix
+{
+  inputs.hctl.url = "github:xx4h/hctl";
+  inputs.hctl.inputs.nixpkgs.follows = "nixpkgs"; # optional, use your nixpkgs
+
+  outputs = { self, nixpkgs, hctl, ... }: {
+    # NixOS
+    nixosConfigurations.yourhost = nixpkgs.lib.nixosSystem {
+      modules = [{
+        environment.systemPackages = [ hctl.packages.${system}.hctl ];
+      }];
+    };
+
+    # Or home-manager
+    homeConfigurations.youruser = home-manager.lib.homeManagerConfiguration {
+      modules = [{
+        home.packages = [ hctl.packages.${pkgs.system}.hctl ];
+      }];
+    };
+  };
+}
+```
+
+Permanent install (declarative via overlay):
+
+```nix
+# flake.nix
+{
+  inputs.hctl.url = "github:xx4h/hctl";
+
+  outputs = { self, nixpkgs, hctl, ... }: {
+    nixosConfigurations.yourhost = nixpkgs.lib.nixosSystem {
+      modules = [{
+        nixpkgs.overlays = [ hctl.overlays.default ];
+        environment.systemPackages = [ pkgs.hctl ];
+      }];
+    };
+  };
+}
+```
+
+Install a specific version:
+
+```bash
+nix run github:xx4h/hctl/v0.8.0
+```
+
 ### asdf
 
 ```bash

@@ -33,6 +33,11 @@ func Test_newCmdOn(t *testing.T) {
 			"(?m)^.*bedroom_main on",
 			"",
 		},
+		"turn on multiple": {
+			"on light.bedroom_main light.bedroom_other",
+			"(?s).*bedroom_main on.*bedroom_other on",
+			"",
+		},
 	}
 
 	testCmd(t, h, tests)

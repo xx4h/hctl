@@ -63,6 +63,11 @@ func Test_newCmdBrightness(t *testing.T) {
 			"(?m)^.*bedroom_other brightness set to -%",
 			"",
 		},
+		"set brightness multiple": {
+			"brightness light.livingroom_other light.bedroom_other 20",
+			"(?s).*livingroom_other brightness set to 20%.*bedroom_other brightness set to 20%",
+			"",
+		},
 	}
 
 	testCmd(t, h, tests)

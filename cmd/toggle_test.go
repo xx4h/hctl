@@ -33,6 +33,11 @@ func Test_newCmdToggle(t *testing.T) {
 			"(?m)^.*bedroom_main toggle",
 			"",
 		},
+		"toggle multiple lights": {
+			"toggle light.bedroom_main light.bedroom_other",
+			"(?s).*bedroom_main toggle.*bedroom_other toggle",
+			"",
+		},
 	}
 
 	testCmd(t, h, tests)

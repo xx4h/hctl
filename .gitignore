@@ -31,6 +31,8 @@ bin/
 dist/
 # exclude result for nix builds
 result
+# exclude direnv cache
+.direnv
 # exclude local hctl.yaml file
 /hctl.yaml
 # explicitly include hctl.example.yaml

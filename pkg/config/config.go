@@ -170,6 +170,10 @@ func (c *Config) getElement(p []string) (*reflect.Value, *reflect.Type, error) {
 }
 
 func getElementByYamlPath(p []string, v reflect.Value, t reflect.Type) (*reflect.Value, *reflect.Type, error) {
+	if len(p) == 0 {
+		return &v, &t, nil
+	}
+
 	// resolve pointer
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
@@ -220,6 +224,10 @@ func toPathSlice(t reflect.Value, name string, dst []string) []string {
 	case reflect.Struct:
 		for i := 0; i < t.NumField(); i++ {
 			fname := t.Type().Field(i).Name
+			// Prefer yaml tag name over Go field name for consistency with GetValueByPath
+			if tag := t.Type().Field(i).Tag.Get("yaml"); tag != "" {
+				fname = strings.SplitN(tag, ",", 2)[0]
+			}
 			dst = toPathSlice(t.Field(i), strings.TrimLeft(name+"."+fname, "."), dst)
 		}
 

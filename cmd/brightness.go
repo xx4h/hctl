@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"os"
 	"slices"
 
 	"github.com/rs/zerolog/log"
@@ -36,17 +37,17 @@ func newBrightnessCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		Use:     "brightness [+|-|min|max|1-99]",
 		Short:   "Change brightness",
 		Aliases: []string{"b", "br", "bright"},
-		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
+		Args:    cobra.MatchAll(cobra.MinimumNArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) == 0 {
 				return compListStates(toComplete, args, []string{"turn_on", "turn_off"}, []string{"brightness"}, "", h)
-			} else if len(args) == 1 {
-				return brightnessRange, cobra.ShellCompDirectiveKeepOrder | cobra.ShellCompDirectiveNoFileComp
 			}
-			return nil, cobra.ShellCompDirectiveDefault
+			// Offer both devices and brightness values for subsequent args
+			devices, directive := compListStatesMulti(toComplete, args, []string{"turn_on", "turn_off"}, []string{"brightness"}, "", h)
+			return append(devices, brightnessRange...), directive
 		},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := validateBrightness(args[1]); err != nil {
+			if err := validateBrightness(args[len(args)-1]); err != nil {
 				return err
 			}
 			if err := cmd.Root().PersistentPreRunE(cmd, args); err != nil {
@@ -56,13 +57,22 @@ func newBrightnessCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.TurnLightOnCustom(args[0], args[1], "", 0, 0)
-			if err != nil {
-				o.FprintError(out, err)
-			} else {
-				o.FprintSuccess(out, fmt.Sprintf("%s brightness set to %s%%", obj, args[1]))
+			value := args[len(args)-1]
+			devices := args[:len(args)-1]
+			var hasErr bool
+			for _, device := range devices {
+				obj, state, sub, err := c.TurnLightOnCustom(device, value, "", 0, 0)
+				if err != nil {
+					o.FprintErrorMsg(out, err)
+					hasErr = true
+				} else {
+					o.FprintSuccess(out, fmt.Sprintf("%s brightness set to %s%%", obj, value))
+				}
+				log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 			}
-			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
+			if hasErr {
+				os.Exit(1)
+			}
 		},
 	}
 

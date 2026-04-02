@@ -64,8 +64,12 @@ func PrintSuccessListWithHeader(header []interface{}, list [][]interface{}) {
 	fmt.Println(ListWithHeader(header, list))
 }
 
-func FprintError(out io.Writer, err error) {
+func FprintErrorMsg(out io.Writer, err error) {
 	pterm.Fprint(out, pterm.Error.Sprintln(err))
+}
+
+func FprintError(out io.Writer, err error) {
+	FprintErrorMsg(out, err)
 	os.Exit(1)
 }
 

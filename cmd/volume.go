@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"os"
 	"slices"
 
 	"github.com/spf13/cobra"
@@ -33,24 +34,34 @@ func newVolumeCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		Use:     "volume",
 		Short:   "Set volume of e.g media player",
 		Aliases: []string{"v"},
-		Args:    cobra.MatchAll(cobra.ExactArgs(2)),
+		Args:    cobra.MatchAll(cobra.MinimumNArgs(2)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			if len(args) == 0 {
 				return compListStates(toComplete, args, []string{"volume_set"}, nil, "", h)
-			} else if len(args) == 1 {
-				return volRange, cobra.ShellCompDirectiveNoFileComp
 			}
-			return nil, cobra.ShellCompDirectiveDefault
+			// Offer both devices and volume values for subsequent args
+			devices, directive := compListStatesMulti(toComplete, args, []string{"volume_set"}, nil, "", h)
+			return append(devices, volRange...), directive
 		},
 		Run: func(_ *cobra.Command, args []string) {
-			if !slices.Contains(volRange, args[1]) {
+			value := args[len(args)-1]
+			devices := args[:len(args)-1]
+			if !slices.Contains(volRange, value) {
 				o.FprintError(out, fmt.Errorf("volume needs to be 1-100"))
 			}
-			obj, state, err := h.VolumeSet(args[0], args[1])
-			if err != nil {
-				o.FprintError(out, err)
+			var hasErr bool
+			for _, device := range devices {
+				obj, state, err := h.VolumeSet(device, value)
+				if err != nil {
+					o.FprintErrorMsg(out, err)
+					hasErr = true
+				} else {
+					o.FprintSuccessAction(out, obj, state)
+				}
 			}
-			o.FprintSuccessAction(out, obj, state)
+			if hasErr {
+				os.Exit(1)
+			}
 		},
 	}
 

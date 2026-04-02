@@ -154,6 +154,21 @@ func compListStates(_ string, ignoredStates []string, serviceCaps []string, attr
 	return choices, cobra.ShellCompDirectiveNoFileComp
 }
 
+// compListStatesMulti wraps compListStates and filters out already-selected devices
+func compListStatesMulti(toComplete string, args []string, serviceCaps []string, attributes []string, state string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
+	choices, directive := compListStates(toComplete, nil, serviceCaps, attributes, state, h)
+	if len(args) > 0 {
+		var filtered []string
+		for _, c := range choices {
+			if !slices.Contains(args, c) {
+				filtered = append(filtered, c)
+			}
+		}
+		choices = filtered
+	}
+	return choices, directive
+}
+
 func compListConfig(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
 	return h.GetConfigOptionsAsPaths(), cobra.ShellCompDirectiveNoFileComp
 }

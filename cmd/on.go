@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"io"
+	"os"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -33,12 +34,9 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "on [-b|--brightness +|-|min|max|1-99] [-c|--color R,G,B] [-t|--color-temp 1000-10000] [--transition seconds]",
 		Short: "Switch or turn on a light or switch",
-		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+		Args:  cobra.MatchAll(cobra.MinimumNArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			if len(args) != 0 {
-				return noMoreArgsComp()
-			}
-			return compListStates(toComplete, args, []string{"turn_on"}, nil, "off", h)
+			return compListStatesMulti(toComplete, args, []string{"turn_on"}, nil, "off", h)
 		},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if brightness == "" {
@@ -54,19 +52,27 @@ func newOnCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			var obj, state, sub string
-			var err error
-			if brightness != "" || color != "" || colorTemp != 0 || transition != 0 {
-				obj, state, sub, err = c.TurnLightOnCustom(args[0], brightness, color, colorTemp, transition)
-			} else {
-				obj, state, sub, err = c.TurnOn(args[0])
+			hasCustom := brightness != "" || color != "" || colorTemp != 0 || transition != 0
+			var hasErr bool
+			for _, device := range args {
+				var obj, state, sub string
+				var err error
+				if hasCustom {
+					obj, state, sub, err = c.TurnLightOnCustom(device, brightness, color, colorTemp, transition)
+				} else {
+					obj, state, sub, err = c.TurnOn(device)
+				}
+				if err != nil {
+					o.FprintErrorMsg(out, err)
+					hasErr = true
+				} else {
+					o.FprintSuccessAction(out, obj, state)
+				}
+				log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 			}
-			if err != nil {
-				o.FprintError(out, err)
-			} else {
-				o.FprintSuccessAction(out, obj, state)
+			if hasErr {
+				os.Exit(1)
 			}
-			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 		},
 	}
 

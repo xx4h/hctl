@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"io"
+	"os"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -30,22 +31,26 @@ func newToggleCmd(h *pkg.Hctl, out io.Writer) *cobra.Command {
 		Use:     "toggle",
 		Short:   "Toggle on/off a light or switch",
 		Aliases: []string{"t"},
-		Args:    cobra.MatchAll(cobra.ExactArgs(1)),
+		Args:    cobra.MatchAll(cobra.MinimumNArgs(1)),
 		ValidArgsFunction: func(_ *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			if len(args) != 0 {
-				return noMoreArgsComp()
-			}
-			return compListStates(toComplete, args, []string{"toggle"}, nil, "", h)
+			return compListStatesMulti(toComplete, args, []string{"toggle"}, nil, "", h)
 		},
 		Run: func(_ *cobra.Command, args []string) {
 			c := h.GetRest()
-			obj, state, sub, err := c.Toggle(args[0])
-			if err != nil {
-				o.FprintError(out, err)
-			} else {
-				o.FprintSuccessAction(out, obj, state)
+			var hasErr bool
+			for _, device := range args {
+				obj, state, sub, err := c.Toggle(device)
+				if err != nil {
+					o.FprintErrorMsg(out, err)
+					hasErr = true
+				} else {
+					o.FprintSuccessAction(out, obj, state)
+				}
+				log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
 			}
-			log.Debug().Caller().Msgf("Result: %s(%s) to %s", obj, sub, state)
+			if hasErr {
+				os.Exit(1)
+			}
 		},
 	}
 

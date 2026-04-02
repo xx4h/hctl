@@ -27,6 +27,11 @@ func Test_newCmdConfigGet(t *testing.T) {
 			"(?m)^OPTION\\s+VALUE$\n^completion.short_names\\s+true",
 			"",
 		},
+		"get section": {
+			"config get logging",
+			"(?m)^OPTION\\s+VALUE$\n^logging.log_level\\s+error",
+			"",
+		},
 	}
 
 	testCmd(t, h, tests)

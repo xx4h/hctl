@@ -158,6 +158,24 @@ func compListConfig(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCom
 	return h.GetConfigOptionsAsPaths(), cobra.ShellCompDirectiveNoFileComp
 }
 
+// compListConfigWithSections returns both full paths and section prefixes for config get completion
+func compListConfigWithSections(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
+	paths := h.GetConfigOptionsAsPaths()
+	sections := map[string]bool{}
+	for _, p := range paths {
+		parts := strings.SplitN(p, ".", 2)
+		if len(parts) == 2 {
+			sections[parts[0]] = true
+		}
+	}
+	var choices []string
+	for s := range sections {
+		choices = append(choices, s)
+	}
+	choices = append(choices, paths...)
+	return choices, cobra.ShellCompDirectiveNoFileComp
+}
+
 func compMediaMap(_ string, _ []string, h *pkg.Hctl) ([]string, cobra.ShellCompDirective) {
 	var choices []string
 	for k := range h.GetMap("media_map") {

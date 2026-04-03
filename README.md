@@ -11,8 +11,6 @@
 [![Test Code Base](https://github.com/xx4h/hctl/actions/workflows/test-full.yml/badge.svg)](https://github.com/xx4h/hctl/actions/workflows/test-full.yml)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/xx4h/hctl/total)](https://github.com/xx4h/hctl/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xx4h/hctl?)](https://goreportcard.com/report/github.com/xx4h/hctl)
-[![codebeat badge](https://codebeat.co/badges/21ee1b92-b94c-4425-a600-b01dd4b1c045)](https://codebeat.co/projects/github-com-xx4h-hctl-main)
-[![SLOC](https://tokei.rs/b1/github/xx4h/hctl?category=code&style=flat)](#)
 [![Number of programming languages used](https://img.shields.io/github/languages/count/xx4h/hctl)](#)
 [![Top programming languages used](https://img.shields.io/github/languages/top/xx4h/hctl)](#)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
@@ -292,8 +290,8 @@ hctl play player1 horn
 ## What's Next / Roadmap
 
 - [ ] Add more actions (like `press` e.g. Buttons, `trigger` e.g. Automations, or `lock` and `unlock` a Lock)
-- [x] Add output/feedback on actions (e.g. use pterm)
-- [ ] Allow multiple devices on actions
 - [ ] Add optional positional for `list entities`, following the same logic as in `toggle`, `on` and `off` (e.g. matching short names and fuzzy matching)
+- [x] Add output/feedback on actions (e.g. use pterm)
+- [x] Allow multiple devices on actions
 - [x] Add possibility to add local mappings for devices in config
-- [ ] Add install methods (native, asdf, ...)
+- [x] Add install methods (native, asdf, ...)

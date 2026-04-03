@@ -91,6 +91,20 @@ func (h *Hass) GetFilteredStatesMap(domains []string) (map[string][]string, erro
 	return t, nil
 }
 
+func (h *Hass) entityExists(name, domain string) (bool, error) {
+	states, err := h.GetStates()
+	if err != nil {
+		return false, err
+	}
+	for _, s := range states {
+		d, n := splitDomainAndName(s.EntityID)
+		if n == name && (domain == "" || d == domain) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func (h *Hass) GetStatesWithService(service string) ([]HassState, error) {
 	var domainsWithService []string
 	var statesWithService []HassState

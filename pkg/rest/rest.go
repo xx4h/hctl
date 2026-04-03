@@ -102,6 +102,16 @@ func (h *Hass) api(meth string, path string, payload map[string]any) ([]byte, er
 		return nil, err
 	}
 
+	if res.StatusCode == http.StatusUnauthorized {
+		return nil, fmt.Errorf("authentication failed: invalid or expired token")
+	}
+	if res.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("API endpoint not found (404): %s", path)
+	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected API response code %d for %s", res.StatusCode, path)
+	}
+
 	return rData, nil
 }
 
@@ -187,7 +197,71 @@ func (h *Hass) findEntity(name string, domain string, service string) (string, s
 			return d, n, nil
 		}
 	}
-	return "", "", fmt.Errorf("no Entity %s capable of %s", name, service)
+	// Entity not found in service-filtered states. Determine why.
+	name, err = h.fuzzyResolveFromAllStates(name, domain)
+	if err != nil {
+		return "", "", err
+	}
+	return "", "", h.entityNotFoundError(name, domain, service)
+}
+
+// fuzzyResolveFromAllStates tries to resolve name against all states via fuzzy
+// matching so that error messages reference the actual entity name.
+func (h *Hass) fuzzyResolveFromAllStates(name, domain string) (string, error) {
+	if !h.Fuzz {
+		return name, nil
+	}
+	allStates, err := h.GetStates()
+	if err != nil {
+		return "", err
+	}
+	var allNames []string
+	for _, s := range allStates {
+		d, n := splitDomainAndName(s.EntityID)
+		if domain != "" && domain != d {
+			continue
+		}
+		allNames = append(allNames, n)
+	}
+	if p, ok := getFuzz(name, allNames); ok {
+		return allNames[p], nil
+	}
+	return name, nil
+}
+
+// entityNotFoundError returns a specific error describing why the entity
+// could not be found for the requested service.
+func (h *Hass) entityNotFoundError(name, domain, service string) error {
+	exists, err := h.entityExists(name, domain)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		if domain != "" {
+			return fmt.Errorf("entity %s.%s does not exist", domain, name)
+		}
+		return fmt.Errorf("entity %s does not exist", name)
+	}
+
+	if domain != "" {
+		domExists, err := h.domainExists(domain)
+		if err != nil {
+			return err
+		}
+		if !domExists {
+			return fmt.Errorf("domain %s does not exist", domain)
+		}
+
+		hasSvc, err := h.domainHasService(domain, service)
+		if err != nil {
+			return err
+		}
+		if !hasSvc {
+			return fmt.Errorf("domain %s has no service %s", domain, service)
+		}
+	}
+
+	return fmt.Errorf("entity %s exists but does not support %s", name, service)
 }
 
 func (h *Hass) entityArgHandler(args []string, service string) (string, string, error) {

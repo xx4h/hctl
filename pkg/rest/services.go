@@ -49,6 +49,33 @@ func (h *Hass) GetServices() ([]HassService, error) {
 	return services, nil
 }
 
+func (h *Hass) domainExists(domain string) (bool, error) {
+	services, err := h.GetServices()
+	if err != nil {
+		return false, err
+	}
+	for _, svc := range services {
+		if svc.Domain == domain {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func (h *Hass) domainHasService(domain, service string) (bool, error) {
+	services, err := h.GetServices()
+	if err != nil {
+		return false, err
+	}
+	for _, svc := range services {
+		if svc.Domain == domain {
+			_, ok := svc.Services[service]
+			return ok, nil
+		}
+	}
+	return false, nil
+}
+
 func (h *Hass) GetFilteredServices(domains []string, services []string) ([]HassService, error) {
 	s, err := h.GetServices()
 	if err != nil {

@@ -122,6 +122,35 @@ Install a specific version:
 nix run github:xx4h/hctl/v0.8.0
 ```
 
+The package installs Bash/Zsh/Fish completion files into the standard
+`share/` paths, so shells that auto-load vendor completions pick them up
+without further configuration.
+
+#### Home Manager
+
+A Home Manager module is exposed at `homeManagerModules.default`:
+
+```nix
+{
+  inputs.hctl.url = "github:xx4h/hctl";
+}
+```
+
+```nix
+# in your Home Manager config
+{ inputs, ... }: {
+  imports = [ inputs.hctl.homeManagerModules.default ];
+
+  programs.hctl = {
+    enable = true;
+    # All three default to true; toggle off to skip the shell init hook.
+    # enableBashIntegration = true;
+    # enableZshIntegration  = true;
+    # enableFishIntegration = true;
+  };
+}
+```
+
 ### asdf
 
 ```bash

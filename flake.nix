@@ -41,6 +41,8 @@
 
         env.CGO_ENABLED = 0;
 
+        nativeBuildInputs = [ pkgs.installShellFiles ];
+
         ldflags = [
           "-s"
           "-w"
@@ -48,6 +50,14 @@
           "-X github.com/xx4h/hctl/cmd.commit=${commit}"
           "-X github.com/xx4h/hctl/cmd.date=${date}"
         ];
+
+        postInstall = pkgs.lib.optionalString
+          (pkgs.stdenv.buildPlatform.canExecute pkgs.stdenv.hostPlatform) ''
+          installShellCompletion --cmd hctl \
+            --bash <($out/bin/hctl completion bash) \
+            --zsh  <($out/bin/hctl completion zsh) \
+            --fish <($out/bin/hctl completion fish)
+        '';
 
         # Skip tests that require network access (sandbox blocks it)
         checkFlags = [ "-skip" "Play" ];
@@ -66,6 +76,9 @@
       overlays.default = final: prev: {
         hctl = mkHctl final;
       };
+
+      homeManagerModules.default = import ./nix/hm-module.nix self;
+      homeManagerModules.hctl = self.homeManagerModules.default;
     }
     //
     flake-utils.lib.eachDefaultSystem (system:
